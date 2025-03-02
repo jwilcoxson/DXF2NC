@@ -85,8 +85,6 @@ namespace WinFormsApp1
                 "(Reverse Path: " + (reverse_path ? "Yes" : "No") + ")",
                 // Set feed rate
                 "N" + LineCounter() + " F" + numFeedRate.Value,
-                // Set relative move mode
-                "N" + LineCounter() + " G91",
             ];
 
             var b = 0.0;
@@ -130,8 +128,11 @@ namespace WinFormsApp1
                 {
                     if (chkStartAbs.Checked)
                     {
+                        lines.Add("N" + LineCounter() + " G90");
                         lines.Add("N" + LineCounter() + " G00 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000"));
                     }
+
+                    lines.Add("N" + LineCounter() + " G91");
                 }
                 else
                 {
