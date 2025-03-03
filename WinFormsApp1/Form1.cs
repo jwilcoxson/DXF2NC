@@ -16,7 +16,7 @@ namespace WinFormsApp1
         public Form1()
         {
             InitializeComponent();
-            
+
         }
 
         // Calculate radius of circular move using dx, dy and DXF LWPOLYLINE 'bulge' field
@@ -311,6 +311,21 @@ namespace WinFormsApp1
                 var x_scale = scale.XScale;
                 var y_scale = scale.YScale;
                 var matrix4 = Matrix4.Scale(x_scale, y_scale, 1);
+                pline.TransformBy(matrix4);
+                vertices = [.. pline.Vertexes.Where(p => true)];
+                GCodeUpdate();
+            }
+        }
+
+        private void translateToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var translate = new DXF2NC.Translate();
+            translate.ShowDialog();
+            if (translate.DialogResult == DialogResult.OK)
+            {
+                var x_offset = translate.XOffset;
+                var y_offset = translate.YOffset;
+                var matrix4 = Matrix4.Translation(x_offset, y_offset, 0);
                 pline.TransformBy(matrix4);
                 vertices = [.. pline.Vertexes.Where(p => true)];
                 GCodeUpdate();

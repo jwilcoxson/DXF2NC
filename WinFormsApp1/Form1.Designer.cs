@@ -51,6 +51,9 @@ namespace WinFormsApp1
             openToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
+            translateToolStripMenuItem1 = new ToolStripMenuItem();
+            scaleToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
             copyToolStripMenuItem = new ToolStripMenuItem();
             chkStartAbs = new CheckBox();
             tabControl1 = new TabControl();
@@ -67,8 +70,6 @@ namespace WinFormsApp1
             lblLayer = new Label();
             numericUpDown1 = new NumericUpDown();
             label2 = new Label();
-            scaleToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -182,17 +183,36 @@ namespace WinFormsApp1
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { scaleToolStripMenuItem, toolStripSeparator1, copyToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, scaleToolStripMenuItem, toolStripSeparator1, copyToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.E;
             editToolStripMenuItem.Size = new Size(49, 24);
             editToolStripMenuItem.Text = "&Edit";
             // 
+            // translateToolStripMenuItem1
+            // 
+            translateToolStripMenuItem1.Name = "translateToolStripMenuItem1";
+            translateToolStripMenuItem1.Size = new Size(224, 26);
+            translateToolStripMenuItem1.Text = "Translate";
+            translateToolStripMenuItem1.Click += translateToolStripMenuItem1_Click;
+            // 
+            // scaleToolStripMenuItem
+            // 
+            scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
+            scaleToolStripMenuItem.Size = new Size(224, 26);
+            scaleToolStripMenuItem.Text = "Scale";
+            scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(221, 6);
+            // 
             // copyToolStripMenuItem
             // 
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             copyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.C;
-            copyToolStripMenuItem.Size = new Size(177, 26);
+            copyToolStripMenuItem.Size = new Size(224, 26);
             copyToolStripMenuItem.Text = "&Copy";
             copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
@@ -343,18 +363,6 @@ namespace WinFormsApp1
             label2.TabIndex = 19;
             label2.Text = "Precision";
             // 
-            // scaleToolStripMenuItem
-            // 
-            scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
-            scaleToolStripMenuItem.Size = new Size(224, 26);
-            scaleToolStripMenuItem.Text = "Scale";
-            scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(221, 6);
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -425,5 +433,6 @@ namespace WinFormsApp1
         private Label label2;
         private ToolStripMenuItem scaleToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem translateToolStripMenuItem1;
     }
 }

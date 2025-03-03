@@ -128,6 +128,7 @@
             Controls.Add(label1);
             Controls.Add(txtXScale);
             Controls.Add(lblXScale);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
             Name = "Scale";
             Text = "Scale";
             ResumeLayout(false);
