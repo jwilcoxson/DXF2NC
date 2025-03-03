@@ -52,10 +52,9 @@ namespace WinFormsApp1
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
             copyToolStripMenuItem = new ToolStripMenuItem();
-            txtFileName = new Label();
             chkStartAbs = new CheckBox();
             tabControl1 = new TabControl();
-            tabGCode = new TabPage();
+            tabCode = new TabPage();
             tabPoints = new TabPage();
             dgvPoints = new DataGridView();
             colIndex = new DataGridViewTextBoxColumn();
@@ -64,19 +63,24 @@ namespace WinFormsApp1
             colB = new DataGridViewTextBoxColumn();
             tabView = new TabPage();
             panel1 = new Panel();
+            cmbLayer = new ComboBox();
+            lblLayer = new Label();
+            numericUpDown1 = new NumericUpDown();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
-            tabGCode.SuspendLayout();
+            tabCode.SuspendLayout();
             tabPoints.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvPoints).BeginInit();
             tabView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // chkInvertX
             // 
             chkInvertX.AutoSize = true;
-            chkInvertX.Location = new System.Drawing.Point(23, 57);
+            chkInvertX.Location = new System.Drawing.Point(602, 74);
             chkInvertX.Name = "chkInvertX";
             chkInvertX.Size = new Size(81, 24);
             chkInvertX.TabIndex = 2;
@@ -87,7 +91,7 @@ namespace WinFormsApp1
             // chkInvertY
             // 
             chkInvertY.AutoSize = true;
-            chkInvertY.Location = new System.Drawing.Point(23, 87);
+            chkInvertY.Location = new System.Drawing.Point(602, 104);
             chkInvertY.Name = "chkInvertY";
             chkInvertY.Size = new Size(80, 24);
             chkInvertY.TabIndex = 3;
@@ -98,7 +102,7 @@ namespace WinFormsApp1
             // chkReversePath
             // 
             chkReversePath.AutoSize = true;
-            chkReversePath.Location = new System.Drawing.Point(23, 117);
+            chkReversePath.Location = new System.Drawing.Point(602, 134);
             chkReversePath.Name = "chkReversePath";
             chkReversePath.Size = new Size(114, 24);
             chkReversePath.TabIndex = 4;
@@ -109,11 +113,11 @@ namespace WinFormsApp1
             // numFeedRate
             // 
             numFeedRate.Increment = new decimal(new int[] { 500, 0, 0, 0 });
-            numFeedRate.Location = new System.Drawing.Point(23, 231);
+            numFeedRate.Location = new System.Drawing.Point(683, 38);
             numFeedRate.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             numFeedRate.Minimum = new decimal(new int[] { 1000, 0, 0, 0 });
             numFeedRate.Name = "numFeedRate";
-            numFeedRate.Size = new Size(114, 27);
+            numFeedRate.Size = new Size(81, 27);
             numFeedRate.TabIndex = 5;
             numFeedRate.Value = new decimal(new int[] { 5000, 0, 0, 0 });
             numFeedRate.ValueChanged += numFeedRate_ValueChanged;
@@ -121,7 +125,7 @@ namespace WinFormsApp1
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(23, 208);
+            label1.Location = new System.Drawing.Point(602, 40);
             label1.Name = "label1";
             label1.Size = new Size(75, 20);
             label1.TabIndex = 6;
@@ -137,7 +141,7 @@ namespace WinFormsApp1
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
             txtOutput.ScrollBars = ScrollBars.Vertical;
-            txtOutput.Size = new Size(569, 507);
+            txtOutput.Size = new Size(564, 513);
             txtOutput.TabIndex = 8;
             // 
             // menuStrip1
@@ -146,7 +150,7 @@ namespace WinFormsApp1
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 28);
+            menuStrip1.Size = new Size(779, 28);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -190,19 +194,10 @@ namespace WinFormsApp1
             copyToolStripMenuItem.Text = "&Copy";
             copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
-            // txtFileName
-            // 
-            txtFileName.AutoSize = true;
-            txtFileName.Location = new System.Drawing.Point(12, 31);
-            txtFileName.Name = "txtFileName";
-            txtFileName.Size = new Size(125, 20);
-            txtFileName.TabIndex = 13;
-            txtFileName.Text = "<No file loaded>";
-            // 
             // chkStartAbs
             // 
             chkStartAbs.AutoSize = true;
-            chkStartAbs.Location = new System.Drawing.Point(23, 147);
+            chkStartAbs.Location = new System.Drawing.Point(602, 164);
             chkStartAbs.Name = "chkStartAbs";
             chkStartAbs.Size = new Size(148, 24);
             chkStartAbs.TabIndex = 14;
@@ -212,25 +207,25 @@ namespace WinFormsApp1
             // 
             // tabControl1
             // 
-            tabControl1.Controls.Add(tabGCode);
+            tabControl1.Controls.Add(tabCode);
             tabControl1.Controls.Add(tabPoints);
             tabControl1.Controls.Add(tabView);
-            tabControl1.Location = new System.Drawing.Point(199, 57);
+            tabControl1.Location = new System.Drawing.Point(12, 118);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(589, 552);
+            tabControl1.Size = new Size(584, 558);
             tabControl1.TabIndex = 15;
             // 
-            // tabGCode
+            // tabCode
             // 
-            tabGCode.Controls.Add(txtOutput);
-            tabGCode.Location = new System.Drawing.Point(4, 29);
-            tabGCode.Name = "tabGCode";
-            tabGCode.Padding = new Padding(3);
-            tabGCode.Size = new Size(581, 519);
-            tabGCode.TabIndex = 0;
-            tabGCode.Text = "G-Code";
-            tabGCode.UseVisualStyleBackColor = true;
+            tabCode.Controls.Add(txtOutput);
+            tabCode.Location = new System.Drawing.Point(4, 29);
+            tabCode.Name = "tabCode";
+            tabCode.Padding = new Padding(3);
+            tabCode.Size = new Size(576, 525);
+            tabCode.TabIndex = 0;
+            tabCode.Text = "Code";
+            tabCode.UseVisualStyleBackColor = true;
             // 
             // tabPoints
             // 
@@ -238,7 +233,7 @@ namespace WinFormsApp1
             tabPoints.Location = new System.Drawing.Point(4, 29);
             tabPoints.Name = "tabPoints";
             tabPoints.Padding = new Padding(3);
-            tabPoints.Size = new Size(581, 519);
+            tabPoints.Size = new Size(576, 525);
             tabPoints.TabIndex = 1;
             tabPoints.Text = "Points";
             tabPoints.UseVisualStyleBackColor = true;
@@ -293,7 +288,7 @@ namespace WinFormsApp1
             tabView.Controls.Add(panel1);
             tabView.Location = new System.Drawing.Point(4, 29);
             tabView.Name = "tabView";
-            tabView.Size = new Size(581, 519);
+            tabView.Size = new Size(576, 525);
             tabView.TabIndex = 2;
             tabView.Text = "View";
             tabView.UseVisualStyleBackColor = true;
@@ -306,14 +301,57 @@ namespace WinFormsApp1
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
+            // cmbLayer
+            // 
+            cmbLayer.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbLayer.FormattingEnabled = true;
+            cmbLayer.Location = new System.Drawing.Point(64, 31);
+            cmbLayer.Name = "cmbLayer";
+            cmbLayer.Size = new Size(178, 28);
+            cmbLayer.TabIndex = 16;
+            cmbLayer.SelectedIndexChanged += cmbLayer_SelectedIndexChanged;
+            // 
+            // lblLayer
+            // 
+            lblLayer.AutoSize = true;
+            lblLayer.Location = new System.Drawing.Point(14, 34);
+            lblLayer.Name = "lblLayer";
+            lblLayer.Size = new Size(44, 20);
+            lblLayer.TabIndex = 17;
+            lblLayer.Text = "Layer";
+            // 
+            // numericUpDown1
+            // 
+            numericUpDown1.Location = new System.Drawing.Point(676, 199);
+            numericUpDown1.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
+            numericUpDown1.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new Size(58, 27);
+            numericUpDown1.TabIndex = 18;
+            numericUpDown1.TextAlign = HorizontalAlignment.Center;
+            numericUpDown1.Value = new decimal(new int[] { 3, 0, 0, 0 });
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(602, 201);
+            label2.Name = "label2";
+            label2.Size = new Size(68, 20);
+            label2.TabIndex = 19;
+            label2.Text = "Precision";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 621);
+            ClientSize = new Size(779, 688);
+            Controls.Add(label2);
+            Controls.Add(numericUpDown1);
+            Controls.Add(lblLayer);
+            Controls.Add(cmbLayer);
             Controls.Add(tabControl1);
             Controls.Add(chkStartAbs);
-            Controls.Add(txtFileName);
             Controls.Add(label1);
             Controls.Add(numFeedRate);
             Controls.Add(chkReversePath);
@@ -331,11 +369,12 @@ namespace WinFormsApp1
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tabControl1.ResumeLayout(false);
-            tabGCode.ResumeLayout(false);
-            tabGCode.PerformLayout();
+            tabCode.ResumeLayout(false);
+            tabCode.PerformLayout();
             tabPoints.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvPoints).EndInit();
             tabView.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -353,12 +392,11 @@ namespace WinFormsApp1
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
-        private Label txtFileName;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem copyToolStripMenuItem;
         private CheckBox chkStartAbs;
         private TabControl tabControl1;
-        private TabPage tabGCode;
+        private TabPage tabCode;
         private TabPage tabPoints;
         private DataGridView dgvPoints;
         private DataGridViewTextBoxColumn colIndex;
@@ -367,5 +405,9 @@ namespace WinFormsApp1
         private DataGridViewTextBoxColumn colB;
         private TabPage tabView;
         private Panel panel1;
+        private ComboBox cmbLayer;
+        private Label lblLayer;
+        private NumericUpDown numericUpDown1;
+        private Label label2;
     }
 }

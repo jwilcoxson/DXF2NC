@@ -1,5 +1,6 @@
 using netDxf.Entities;
 using netDxf;
+using System.Drawing.Drawing2D;
 
 namespace WinFormsApp1
 {
@@ -7,10 +8,10 @@ namespace WinFormsApp1
     {
         DxfDocument doc = new();
         Polyline2D pline = new();
-        List<Polyline2DVertex> vertices = new();
+        List<Polyline2DVertex> vertices = [];
         bool loaded = false;
         int count = 0;
-
+        string format = "0.000";
 
         public Form1()
         {
@@ -49,9 +50,11 @@ namespace WinFormsApp1
                 try
                 {
                     doc = DxfDocument.Load(file_name);
-                    txtFileName.Text = dialog.SafeFileName;
-                    pline = doc.Entities.Polylines2D.Where(p => p.Layer.Name == "Path").First();
-                    vertices = [.. pline.Vertexes.Where(p => true)];
+                    this.Text = "DXF2NC - " + doc.Name;
+                    foreach (var layer in doc.Layers)
+                    {
+                        cmbLayer.Items.Add(layer.Name);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -69,14 +72,14 @@ namespace WinFormsApp1
         public void GeneratePath()
         {
             // Get vertices of the first Polyline on the "Path" layer
-            
+
             var start_abs = chkStartAbs.Checked;
             dgvPoints.Rows.Clear();
 
             // Generate G-code header
             List<string> lines =
             [
-                "(Generated from " + txtFileName.Text + ")",
+                "(Generated from " + doc.Name + ")",
                 "(" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ")",
                 "(Invert X: " + (chkInvertX.Checked ? "Yes" : "No") + ")",
                 "(Invert Y: " + (chkInvertY.Checked ? "Yes" : "No") + ")",
@@ -92,7 +95,7 @@ namespace WinFormsApp1
             // Iterate over remaining vertices, generate path
             foreach (var v in vertices)
             {
-                dgvPoints.Rows.Add(dgvPoints.Rows.Count + 1, v.Position.X.ToString("0.000"), v.Position.Y.ToString("0.000"), v.Bulge.ToString("0.000"));
+                dgvPoints.Rows.Add(dgvPoints.Rows.Count + 1, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
                 var cw_move = false;
                 var ccw_move = false;
                 var r = 0.0;
@@ -121,28 +124,31 @@ namespace WinFormsApp1
                 {
                     if (start_abs)
                     {
+                        lines.Add("(Absolute positioning)");
                         lines.Add("N" + LineCounter() + " G90");
-                        lines.Add("N" + LineCounter() + " G00 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000"));
+                        lines.Add("(Rapid move to start point)");
+                        lines.Add("N" + LineCounter() + " G00 X" + dx.ToString(format) + " Y" + dy.ToString(format));
                     }
-
+                    lines.Add("(Relative positioning)");
                     lines.Add("N" + LineCounter() + " G91");
+                    lines.Add("(Path)");
                 }
                 else
                 {
                     // G02: Clockwise move
                     if (cw_move)
                     {
-                        lines.Add("N" + LineCounter() + " G02 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000") + " U" + r.ToString("0.000"));
+                        lines.Add("N" + LineCounter() + " G02 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
                     }
                     // G03: Counterclockwise move
                     else if (ccw_move)
                     {
-                        lines.Add("N" + LineCounter() + " G03 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000") + " U" + r.ToString("0.000"));
+                        lines.Add("N" + LineCounter() + " G03 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
                     }
                     // G01: Linear Move
                     else
                     {
-                        lines.Add("N" + LineCounter() + " G01 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000"));
+                        lines.Add("N" + LineCounter() + " G01 X" + dx.ToString(format) + " Y" + dy.ToString(format));
                     }
                 }
 
@@ -171,23 +177,17 @@ namespace WinFormsApp1
 
         private void chkInvertX_CheckedChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                var position = vertices[i].Position;
-                position.X = -position.X;
-                vertices[i].Position = position;
-            }
+            var matrix4 = Matrix4.Scale(-1, 1, 1);
+            pline.TransformBy(matrix4);
+            vertices = [.. pline.Vertexes.Where(p => true)];
             GCodeUpdate();
         }
 
         private void chkInvertY_CheckedChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                var position = vertices[i].Position;
-                position.Y = -position.Y;
-                vertices[i].Position = position;
-            }
+            var matrix4 = Matrix4.Scale(1, -1, 1);
+            pline.TransformBy(matrix4);
+            vertices = [.. pline.Vertexes.Where(p => true)];
             GCodeUpdate();
         }
 
@@ -227,7 +227,7 @@ namespace WinFormsApp1
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             if (loaded)
-            {   
+            {
                 Graphics g = e.Graphics;
                 System.Drawing.Point[] points = new System.Drawing.Point[vertices.Count];
 
@@ -238,21 +238,64 @@ namespace WinFormsApp1
                 var max_x = vertices.Max(p => p.Position.X);
                 var min_y = vertices.Min(p => p.Position.Y);
                 var max_y = vertices.Max(p => p.Position.Y);
-                var dx = max_x - min_x;
-                var dy = max_y - min_y;
-                var margin = 10;
-                var x_scale = (width - 2 * margin) / dx;
-                var y_scale = (height - 2 * margin) / dy;
-                var x_offset = -min_x * x_scale;
-                var y_offset = -min_y * y_scale;
+                var span_x = max_x - min_x;
+                var span_y = max_y - min_y;
+                var x_scale = (width) / span_x;
+                var y_scale = (height) / span_y;
+
+                var scale = Math.Min(x_scale, y_scale) * 0.9;
+
+                var x_offset = -min_x * scale + (width - span_x * scale) / 2;
+                var y_offset = -min_y * scale + (height - span_y * scale) / 2;
 
                 for (int i = 0; i < vertices.Count; i++)
                 {
-                    points[i] = new System.Drawing.Point((int)(vertices[i].Position.X * x_scale + x_offset + margin), (int)(vertices[i].Position.Y * y_scale + y_offset + margin));
-                }
+                    var x = (float)(vertices[i].Position.X * scale + x_offset);
+                    var y = (float)(vertices[i].Position.Y * scale + y_offset);
 
-                g.DrawLines(new Pen(Color.Black, 3), points);
+                    if (i > 0 && i < (vertices.Count - 1))
+                    {
+                        var next_x = (float)(vertices[i + 1].Position.X * scale + x_offset);
+                        var next_y = (float)(vertices[i + 1].Position.Y * scale + y_offset);
+                        var dx = next_x - x;
+                        var dy = next_y - y;
+
+                        if (vertices[i].Bulge != 0.0)
+                        {
+                            var r = (float)CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
+                            g.DrawString("R: " + (r / scale).ToString("0.000"), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
+
+                        }
+                        else
+                        {
+                            g.DrawLine(new Pen(Color.Black, 2), x, y, next_x, next_y);
+                        }
+                    }
+                    else if (i == 0)
+                    {
+                        g.DrawEllipse(new Pen(Color.Red, 2), x - 5, y - 5, 10, 10);
+                        g.DrawString("Start", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
+                    }
+                    if (i == vertices.Count - 1)
+                    {
+                        g.DrawEllipse(new Pen(Color.Green, 2), x - 5, y - 5, 10, 10);
+                        g.DrawString("End", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
+                    }
+                }
             }
+        }
+
+        private void cmbLayer_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pline = doc.Entities.Polylines2D.First(p => p.Layer.Name == cmbLayer.SelectedItem.ToString());
+            vertices = [.. pline.Vertexes.Where(p => true)];
+            GCodeUpdate();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            format = "0." + new string('0', (int)numericUpDown1.Value);
+            GCodeUpdate();
         }
     }
 }
