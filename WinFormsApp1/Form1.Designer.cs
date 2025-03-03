@@ -45,7 +45,6 @@ namespace WinFormsApp1
             chkReversePath = new CheckBox();
             numFeedRate = new NumericUpDown();
             label1 = new Label();
-            groupBox1 = new GroupBox();
             txtOutput = new TextBox();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
@@ -55,9 +54,23 @@ namespace WinFormsApp1
             copyToolStripMenuItem = new ToolStripMenuItem();
             txtFileName = new Label();
             chkStartAbs = new CheckBox();
+            tabControl1 = new TabControl();
+            tabGCode = new TabPage();
+            tabPoints = new TabPage();
+            dgvPoints = new DataGridView();
+            colIndex = new DataGridViewTextBoxColumn();
+            colX = new DataGridViewTextBoxColumn();
+            colY = new DataGridViewTextBoxColumn();
+            colB = new DataGridViewTextBoxColumn();
+            tabView = new TabPage();
+            panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
-            groupBox1.SuspendLayout();
             menuStrip1.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabGCode.SuspendLayout();
+            tabPoints.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvPoints).BeginInit();
+            tabView.SuspendLayout();
             SuspendLayout();
             // 
             // chkInvertX
@@ -114,27 +127,17 @@ namespace WinFormsApp1
             label1.TabIndex = 6;
             label1.Text = "Feed Rate";
             // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(txtOutput);
-            groupBox1.Location = new System.Drawing.Point(201, 57);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(587, 557);
-            groupBox1.TabIndex = 11;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "G-code";
-            // 
             // txtOutput
             // 
             txtOutput.BackColor = SystemColors.Window;
             txtOutput.BorderStyle = BorderStyle.FixedSingle;
             txtOutput.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtOutput.Location = new System.Drawing.Point(6, 30);
+            txtOutput.Location = new System.Drawing.Point(6, 6);
             txtOutput.Multiline = true;
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
             txtOutput.ScrollBars = ScrollBars.Vertical;
-            txtOutput.Size = new Size(575, 521);
+            txtOutput.Size = new Size(569, 507);
             txtOutput.TabIndex = 8;
             // 
             // menuStrip1
@@ -207,14 +210,110 @@ namespace WinFormsApp1
             chkStartAbs.UseVisualStyleBackColor = true;
             chkStartAbs.CheckedChanged += chkStartAbs_CheckedChanged;
             // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabGCode);
+            tabControl1.Controls.Add(tabPoints);
+            tabControl1.Controls.Add(tabView);
+            tabControl1.Location = new System.Drawing.Point(199, 57);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(589, 552);
+            tabControl1.TabIndex = 15;
+            // 
+            // tabGCode
+            // 
+            tabGCode.Controls.Add(txtOutput);
+            tabGCode.Location = new System.Drawing.Point(4, 29);
+            tabGCode.Name = "tabGCode";
+            tabGCode.Padding = new Padding(3);
+            tabGCode.Size = new Size(581, 519);
+            tabGCode.TabIndex = 0;
+            tabGCode.Text = "G-Code";
+            tabGCode.UseVisualStyleBackColor = true;
+            // 
+            // tabPoints
+            // 
+            tabPoints.Controls.Add(dgvPoints);
+            tabPoints.Location = new System.Drawing.Point(4, 29);
+            tabPoints.Name = "tabPoints";
+            tabPoints.Padding = new Padding(3);
+            tabPoints.Size = new Size(581, 519);
+            tabPoints.TabIndex = 1;
+            tabPoints.Text = "Points";
+            tabPoints.UseVisualStyleBackColor = true;
+            // 
+            // dgvPoints
+            // 
+            dgvPoints.AllowUserToAddRows = false;
+            dgvPoints.AllowUserToDeleteRows = false;
+            dgvPoints.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvPoints.Columns.AddRange(new DataGridViewColumn[] { colIndex, colX, colY, colB });
+            dgvPoints.Location = new System.Drawing.Point(4, 4);
+            dgvPoints.Name = "dgvPoints";
+            dgvPoints.ReadOnly = true;
+            dgvPoints.RowHeadersWidth = 51;
+            dgvPoints.Size = new Size(571, 512);
+            dgvPoints.TabIndex = 0;
+            // 
+            // colIndex
+            // 
+            colIndex.HeaderText = "Index";
+            colIndex.MinimumWidth = 6;
+            colIndex.Name = "colIndex";
+            colIndex.ReadOnly = true;
+            colIndex.Width = 75;
+            // 
+            // colX
+            // 
+            colX.HeaderText = "X";
+            colX.MinimumWidth = 6;
+            colX.Name = "colX";
+            colX.ReadOnly = true;
+            colX.Width = 125;
+            // 
+            // colY
+            // 
+            colY.HeaderText = "Y";
+            colY.MinimumWidth = 6;
+            colY.Name = "colY";
+            colY.ReadOnly = true;
+            colY.Width = 125;
+            // 
+            // colB
+            // 
+            colB.HeaderText = "B";
+            colB.MinimumWidth = 6;
+            colB.Name = "colB";
+            colB.ReadOnly = true;
+            colB.Width = 125;
+            // 
+            // tabView
+            // 
+            tabView.Controls.Add(panel1);
+            tabView.Location = new System.Drawing.Point(4, 29);
+            tabView.Name = "tabView";
+            tabView.Size = new Size(581, 519);
+            tabView.TabIndex = 2;
+            tabView.Text = "View";
+            tabView.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            panel1.Location = new System.Drawing.Point(1, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(580, 516);
+            panel1.TabIndex = 0;
+            panel1.Paint += panel1_Paint;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 621);
+            Controls.Add(tabControl1);
             Controls.Add(chkStartAbs);
             Controls.Add(txtFileName);
-            Controls.Add(groupBox1);
             Controls.Add(label1);
             Controls.Add(numFeedRate);
             Controls.Add(chkReversePath);
@@ -229,10 +328,14 @@ namespace WinFormsApp1
             SizeGripStyle = SizeGripStyle.Hide;
             Text = "DXF2NC";
             ((System.ComponentModel.ISupportInitialize)numFeedRate).EndInit();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabGCode.ResumeLayout(false);
+            tabGCode.PerformLayout();
+            tabPoints.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvPoints).EndInit();
+            tabView.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -245,7 +348,6 @@ namespace WinFormsApp1
         private CheckBox chkReversePath;
         private NumericUpDown numFeedRate;
         private Label label1;
-        private GroupBox groupBox1;
         private TextBox txtOutput;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
@@ -255,5 +357,15 @@ namespace WinFormsApp1
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem copyToolStripMenuItem;
         private CheckBox chkStartAbs;
+        private TabControl tabControl1;
+        private TabPage tabGCode;
+        private TabPage tabPoints;
+        private DataGridView dgvPoints;
+        private DataGridViewTextBoxColumn colIndex;
+        private DataGridViewTextBoxColumn colX;
+        private DataGridViewTextBoxColumn colY;
+        private DataGridViewTextBoxColumn colB;
+        private TabPage tabView;
+        private Panel panel1;
     }
 }

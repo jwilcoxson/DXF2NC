@@ -6,8 +6,11 @@ namespace WinFormsApp1
     public partial class Form1 : Form
     {
         DxfDocument doc = new();
+        Polyline2D pline = new();
+        List<Polyline2DVertex> vertices = new();
         bool loaded = false;
         int count = 0;
+
 
         public Form1()
         {
@@ -61,14 +64,16 @@ namespace WinFormsApp1
             }
         }
 
-        public void GeneratePath(DxfDocument doc)
+        public void GeneratePath()
         {
             // Get vertices of the first Polyline on the "Path" layer
-            var pline = doc.Entities.Polylines2D.Where(p => p.Layer.Name == "Path").First();
-            var vertices = pline.Vertexes.Where(p => true).ToList();
+            pline = doc.Entities.Polylines2D.Where(p => p.Layer.Name == "Path").First();
+            vertices = [.. pline.Vertexes.Where(p => true)];
             var reverse_path = chkReversePath.Checked;
             var invert_x = chkInvertX.Checked;
             var invert_y = chkInvertY.Checked;
+            var start_abs = chkStartAbs.Checked;
+            dgvPoints.Rows.Clear();
 
             if (reverse_path)
             {
@@ -83,7 +88,6 @@ namespace WinFormsApp1
                 "(Invert X: " + (invert_x ? "Yes" : "No") + ")",
                 "(Invert Y: " + (invert_y ? "Yes" : "No") + ")",
                 "(Reverse Path: " + (reverse_path ? "Yes" : "No") + ")",
-                // Set feed rate
                 "N" + LineCounter() + " F" + numFeedRate.Value,
             ];
 
@@ -95,6 +99,7 @@ namespace WinFormsApp1
             // Iterate over remaining vertices, generate path
             foreach (var v in vertices)
             {
+                dgvPoints.Rows.Add(dgvPoints.Rows.Count + 1, v.Position.X.ToString("0.000"), v.Position.Y.ToString("0.000"), v.Bulge.ToString("0.000"));
                 var cw_move = false;
                 var ccw_move = false;
                 var r = 0.0;
@@ -126,7 +131,7 @@ namespace WinFormsApp1
 
                 if (ReferenceEquals(v, vertices.First()))
                 {
-                    if (chkStartAbs.Checked)
+                    if (start_abs)
                     {
                         lines.Add("N" + LineCounter() + " G90");
                         lines.Add("N" + LineCounter() + " G00 X" + dx.ToString("0.000") + " Y" + dy.ToString("0.000"));
@@ -165,13 +170,14 @@ namespace WinFormsApp1
                 output = output + s + Environment.NewLine;
             }
             txtOutput.Text = output;
+            panel1.Refresh();
         }
 
         private void GCodeUpdate()
         {
             if (loaded)
             {
-                GeneratePath(doc);
+                GeneratePath();
             }
         }
 
@@ -214,6 +220,41 @@ namespace WinFormsApp1
         private void chkStartAbs_CheckedChanged(object sender, EventArgs e)
         {
             GCodeUpdate();
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            if (loaded)
+            {   
+                Graphics g = e.Graphics;
+                System.Drawing.Point[] points = new System.Drawing.Point[vertices.Count];
+
+                var width = panel1.Width;
+                var height = panel1.Height;
+
+                var min_x = vertices.Min(p => p.Position.X);
+                var max_x = vertices.Max(p => p.Position.X);
+                var min_y = vertices.Min(p => p.Position.Y);
+                var max_y = vertices.Max(p => p.Position.Y);
+
+                var dx = max_x - min_x;
+                var dy = max_y - min_y;
+
+                var margin = 10;
+
+                var x_scale = (width - 2 * margin) / dx;
+                var y_scale = (height - 2 * margin) / dy;
+
+                var x_offset = -min_x * x_scale;
+                var y_offset = -min_y * y_scale;
+
+                for (int i = 0; i < vertices.Count; i++)
+                {
+                    points[i] = new System.Drawing.Point((int)(vertices[i].Position.X * x_scale + x_offset + margin), (int)(vertices[i].Position.Y * y_scale + y_offset + margin));
+                }
+
+                g.DrawLines(new Pen(Color.Black, 3), points);
+            }
         }
     }
 }
