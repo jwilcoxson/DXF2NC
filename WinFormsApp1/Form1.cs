@@ -1,6 +1,7 @@
 using netDxf.Entities;
 using netDxf;
 using System.Drawing.Drawing2D;
+using DXF2NC;
 
 namespace WinFormsApp1
 {
@@ -10,29 +11,13 @@ namespace WinFormsApp1
         Polyline2D pline = new();
         List<Polyline2DVertex> vertices = [];
         bool loaded = false;
-        int count = 0;
+
         string format = "0.000";
 
         public Form1()
         {
             InitializeComponent();
 
-        }
-
-        // Calculate radius of circular move using dx, dy and DXF LWPOLYLINE 'bulge' field
-        public static double CalcRadius(double dx, double dy, double b)
-        {
-            var h = Math.Sqrt(dx * dx + dy * dy);
-            var d = h / 2;
-            var r = (d * ((b * b) + 1)) / (2 * b);
-            return Math.Abs(r);
-        }
-
-        // Generate incremental line numbers
-        public string LineCounter()
-        {
-            count = count + 10;
-            return count.ToString("D4");
         }
 
         // Open DXF file
@@ -56,6 +41,8 @@ namespace WinFormsApp1
                     {
                         cmbLayer.Items.Add(layer.Name);
                     }
+                    cmbLayer.SelectedIndex = 0;
+
                 }
                 catch (Exception ex)
                 {
@@ -69,108 +56,31 @@ namespace WinFormsApp1
                 return false;
             }
         }
-
-        public void GeneratePath()
-        {
-            var start_abs = chkStartAbs.Checked;
-            dgvPoints.Rows.Clear();
-
-            // Generate G-code header
-            List<string> lines =
-            [
-                "(Generated from " + doc.Name + ")",
-                "(" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ")",
-                "(Invert X: " + (chkInvertX.Checked ? "Yes" : "No") + ")",
-                "(Invert Y: " + (chkInvertY.Checked ? "Yes" : "No") + ")",
-                "(Reverse Path: " + (chkReversePath.Checked ? "Yes" : "No") + ")",
-                "N" + LineCounter() + " F" + numFeedRate.Value,
-            ];
-
-            var b = 0.0;
-            var circ = false;
-            var prev_x = 0.0;
-            var prev_y = 0.0;
-
-            // Iterate over remaining vertices, generate path
-            foreach (var v in vertices)
-            {
-                dgvPoints.Rows.Add(dgvPoints.Rows.Count + 1, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
-                var cw_move = false;
-                var ccw_move = false;
-                var r = 0.0;
-                var x = v.Position.X;
-                var y = v.Position.Y;
-                var dx = x - prev_x;
-                var dy = y - prev_y;
-
-                // If completing circular move, calculate radius
-                if (circ)
-                {
-                    r = CalcRadius(dx, dy, b);
-                    cw_move = b < 0.0;
-                    ccw_move = b > 0.0;
-                    circ = false;
-                }
-
-                // Determine if starting circular move
-                if (v.Bulge != 0.0)
-                {
-                    b = v.Bulge;
-                    circ = true;
-                }
-
-                if (ReferenceEquals(v, vertices.First()))
-                {
-                    if (start_abs)
-                    {
-                        lines.Add("(Absolute positioning)");
-                        lines.Add("N" + LineCounter() + " G90");
-                        lines.Add("(Rapid move to start point)");
-                        lines.Add("N" + LineCounter() + " G00 X" + dx.ToString(format) + " Y" + dy.ToString(format));
-                    }
-                    lines.Add("(Relative positioning)");
-                    lines.Add("N" + LineCounter() + " G91");
-                    lines.Add("(Path)");
-                }
-                else
-                {
-                    // G02: Clockwise move
-                    if (cw_move)
-                    {
-                        lines.Add("N" + LineCounter() + " G02 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
-                    }
-                    // G03: Counterclockwise move
-                    else if (ccw_move)
-                    {
-                        lines.Add("N" + LineCounter() + " G03 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
-                    }
-                    // G01: Linear Move
-                    else
-                    {
-                        lines.Add("N" + LineCounter() + " G01 X" + dx.ToString(format) + " Y" + dy.ToString(format));
-                    }
-                }
-
-                prev_x = x;
-                prev_y = y;
-
-            }
-            lines.Add("N" + LineCounter() + " M30");
-            string output = "";
-            count = 0;
-            foreach (string s in lines)
-            {
-                output = output + s + Environment.NewLine;
-            }
-            txtOutput.Text = output;
-            panel1.Refresh();
-        }
+        
 
         private void GCodeUpdate()
         {
             if (loaded)
             {
-                GeneratePath();
+                var header = "(Generated from " + doc.Name + " on " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ")" + Environment.NewLine;
+                header += "(Layer: " + pline.Layer.Name + ")" + Environment.NewLine;
+                header += "(Handle: " + pline.Handle + ")" + Environment.NewLine;
+                header += "(Vertices: " + vertices.Count + ")" + Environment.NewLine;
+                header += "(Invert X: " + chkInvertX.Checked + ")" + Environment.NewLine;
+                header += "(Invert Y: " + chkInvertY.Checked + ")" + Environment.NewLine;
+                header += "(Reverse Path: " + chkReversePath.Checked + ")";
+
+                PathGenerator pathGenerator = new();
+                txtOutput.Text = pathGenerator.GeneratePath(vertices, chkStartAbs.Checked, (int)numFeedRate.Value, format, header);
+                txtOutput.Text += Environment.NewLine + "(Length: " + pathGenerator.length.ToString(format) + ")";
+                txtOutput.Text += Environment.NewLine + "(Time: " + pathGenerator.time.ToString(format) + "s)";
+
+                dgvPoints.Rows.Clear();
+                for (int i = 1; i <= vertices.Count; i++)
+                {
+                    var v = vertices[i - 1];
+                    dgvPoints.Rows.Add(i, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
+                }
             }
         }
 
@@ -261,7 +171,7 @@ namespace WinFormsApp1
 
                         if (vertices[i].Bulge != 0.0)
                         {
-                            var r = (float)CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
+                            var r = (float)PathGenerator.CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
                             g.DrawString("R: " + (r / scale).ToString(format), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
 
                         }
@@ -290,12 +200,18 @@ namespace WinFormsApp1
 
         private void cmbLayer_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pline = doc.Entities.Polylines2D.First(p => p.Layer.Name == cmbLayer.SelectedItem.ToString());
-            vertices = [.. pline.Vertexes.Where(p => true)];
-            GCodeUpdate();
+            cmbPolyline.Items.Clear();
+            foreach (var pline in doc.Entities.Polylines2D.Where(p => p.Layer.Name == cmbLayer.SelectedItem.ToString()))
+            {
+                cmbPolyline.Items.Add(pline.Handle);
+            }
+            if (cmbPolyline.Items.Count > 0)
+            {
+                cmbPolyline.SelectedIndex = 0;
+            }
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void numPrecision_ValueChanged(object sender, EventArgs e)
         {
             format = "0." + new string('0', (int)numericUpDown1.Value);
             GCodeUpdate();
@@ -326,6 +242,27 @@ namespace WinFormsApp1
                 var x_offset = translate.XOffset;
                 var y_offset = translate.YOffset;
                 var matrix4 = Matrix4.Translation(x_offset, y_offset, 0);
+                pline.TransformBy(matrix4);
+                vertices = [.. pline.Vertexes.Where(p => true)];
+                GCodeUpdate();
+            }
+        }
+
+        private void cmbPolyline_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            pline = doc.Entities.Polylines2D.First(p => p.Handle == cmbPolyline.SelectedItem.ToString());
+            vertices = [.. pline.Vertexes.Where(p => true)];
+            GCodeUpdate();
+        }
+
+        private void rotateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var rotate = new DXF2NC.Rotate();
+            rotate.ShowDialog();
+            if (rotate.DialogResult == DialogResult.OK)
+            {
+                var angle = rotate.Angle;
+                var matrix4 = Matrix4.RotationZ(angle);
                 pline.TransformBy(matrix4);
                 vertices = [.. pline.Vertexes.Where(p => true)];
                 GCodeUpdate();

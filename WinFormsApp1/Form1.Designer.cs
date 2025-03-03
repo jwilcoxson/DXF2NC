@@ -70,6 +70,9 @@ namespace WinFormsApp1
             lblLayer = new Label();
             numericUpDown1 = new NumericUpDown();
             label2 = new Label();
+            lblPolyline = new Label();
+            cmbPolyline = new ComboBox();
+            rotateToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -183,7 +186,7 @@ namespace WinFormsApp1
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, scaleToolStripMenuItem, toolStripSeparator1, copyToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, rotateToolStripMenuItem, scaleToolStripMenuItem, toolStripSeparator1, copyToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.E;
             editToolStripMenuItem.Size = new Size(49, 24);
@@ -352,7 +355,7 @@ namespace WinFormsApp1
             numericUpDown1.TabIndex = 18;
             numericUpDown1.TextAlign = HorizontalAlignment.Center;
             numericUpDown1.Value = new decimal(new int[] { 3, 0, 0, 0 });
-            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
+            numericUpDown1.ValueChanged += numPrecision_ValueChanged;
             // 
             // label2
             // 
@@ -363,11 +366,39 @@ namespace WinFormsApp1
             label2.TabIndex = 19;
             label2.Text = "Precision";
             // 
+            // lblPolyline
+            // 
+            lblPolyline.AutoSize = true;
+            lblPolyline.Location = new System.Drawing.Point(248, 34);
+            lblPolyline.Name = "lblPolyline";
+            lblPolyline.Size = new Size(63, 20);
+            lblPolyline.TabIndex = 20;
+            lblPolyline.Text = "PolyLine";
+            // 
+            // cmbPolyline
+            // 
+            cmbPolyline.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPolyline.FormattingEnabled = true;
+            cmbPolyline.Location = new System.Drawing.Point(317, 31);
+            cmbPolyline.Name = "cmbPolyline";
+            cmbPolyline.Size = new Size(178, 28);
+            cmbPolyline.TabIndex = 21;
+            cmbPolyline.SelectedIndexChanged += cmbPolyline_SelectedIndexChanged;
+            // 
+            // rotateToolStripMenuItem
+            // 
+            rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+            rotateToolStripMenuItem.Size = new Size(224, 26);
+            rotateToolStripMenuItem.Text = "Rotate";
+            rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(779, 688);
+            Controls.Add(cmbPolyline);
+            Controls.Add(lblPolyline);
             Controls.Add(label2);
             Controls.Add(numericUpDown1);
             Controls.Add(lblLayer);
@@ -434,5 +465,8 @@ namespace WinFormsApp1
         private ToolStripMenuItem scaleToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem translateToolStripMenuItem1;
+        private Label lblPolyline;
+        private ComboBox cmbPolyline;
+        private ToolStripMenuItem rotateToolStripMenuItem;
     }
 }
