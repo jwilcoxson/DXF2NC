@@ -13,7 +13,7 @@ namespace DXF2NC
     class PathGenerator
     {
         int count = 0;
-        public double length = 0.0;
+        public List<double> lengths = [];
         public double time = 0.0;
 
         // Generate incremental line numbers
@@ -103,19 +103,19 @@ namespace DXF2NC
                     // G02: Clockwise move
                     if (cw_move)
                     {
-                        length += CalculateArcLength(prev_x, prev_y, x, y, b);
+                        lengths.Add(CalculateArcLength(prev_x, prev_y, x, y, b));
                         lines.Add("N" + LineCounter() + " G02 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
                     }
                     // G03: Counterclockwise move
                     else if (ccw_move)
                     {
-                        length += CalculateArcLength(prev_x, prev_y, x, y, b);
+                        lengths.Add(CalculateArcLength(prev_x, prev_y, x, y, b));
                         lines.Add("N" + LineCounter() + " G03 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
                     }
                     // G01: Linear Move
                     else
                     {
-                        length += Math.Sqrt(dx * dx + dy * dy);
+                        lengths.Add(Math.Sqrt(dx * dx + dy * dy));
                         lines.Add("N" + LineCounter() + " G01 X" + dx.ToString(format) + " Y" + dy.ToString(format));
                     }
                 }
@@ -124,18 +124,10 @@ namespace DXF2NC
                 prev_y = y;
 
             }
-
             lines.Add("N" + LineCounter() + " M30");
             lines.Add(footer);
-            string output = "";
-            count = 0;
-
-            foreach (string s in lines)
-            {
-                output = output + s + Environment.NewLine;
-            }
-            time = length / feed_rate * 60;
-            return output;
+            time = lengths.Sum() / feed_rate * 60;
+            return string.Join(Environment.NewLine, lines);
         }
     }
 }

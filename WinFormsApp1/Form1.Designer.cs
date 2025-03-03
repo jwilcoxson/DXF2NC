@@ -52,6 +52,7 @@ namespace WinFormsApp1
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
             translateToolStripMenuItem1 = new ToolStripMenuItem();
+            rotateToolStripMenuItem = new ToolStripMenuItem();
             scaleToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             copyToolStripMenuItem = new ToolStripMenuItem();
@@ -64,6 +65,7 @@ namespace WinFormsApp1
             colX = new DataGridViewTextBoxColumn();
             colY = new DataGridViewTextBoxColumn();
             colB = new DataGridViewTextBoxColumn();
+            colLength = new DataGridViewTextBoxColumn();
             tabView = new TabPage();
             panel1 = new Panel();
             cmbLayer = new ComboBox();
@@ -72,7 +74,6 @@ namespace WinFormsApp1
             label2 = new Label();
             lblPolyline = new Label();
             cmbPolyline = new ComboBox();
-            rotateToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -86,7 +87,7 @@ namespace WinFormsApp1
             // chkInvertX
             // 
             chkInvertX.AutoSize = true;
-            chkInvertX.Location = new System.Drawing.Point(602, 74);
+            chkInvertX.Location = new System.Drawing.Point(747, 73);
             chkInvertX.Name = "chkInvertX";
             chkInvertX.Size = new Size(81, 24);
             chkInvertX.TabIndex = 2;
@@ -97,7 +98,7 @@ namespace WinFormsApp1
             // chkInvertY
             // 
             chkInvertY.AutoSize = true;
-            chkInvertY.Location = new System.Drawing.Point(602, 104);
+            chkInvertY.Location = new System.Drawing.Point(747, 103);
             chkInvertY.Name = "chkInvertY";
             chkInvertY.Size = new Size(80, 24);
             chkInvertY.TabIndex = 3;
@@ -108,7 +109,7 @@ namespace WinFormsApp1
             // chkReversePath
             // 
             chkReversePath.AutoSize = true;
-            chkReversePath.Location = new System.Drawing.Point(602, 134);
+            chkReversePath.Location = new System.Drawing.Point(747, 133);
             chkReversePath.Name = "chkReversePath";
             chkReversePath.Size = new Size(114, 24);
             chkReversePath.TabIndex = 4;
@@ -119,7 +120,7 @@ namespace WinFormsApp1
             // numFeedRate
             // 
             numFeedRate.Increment = new decimal(new int[] { 500, 0, 0, 0 });
-            numFeedRate.Location = new System.Drawing.Point(683, 38);
+            numFeedRate.Location = new System.Drawing.Point(828, 37);
             numFeedRate.Maximum = new decimal(new int[] { 20000, 0, 0, 0 });
             numFeedRate.Minimum = new decimal(new int[] { 1000, 0, 0, 0 });
             numFeedRate.Name = "numFeedRate";
@@ -131,7 +132,7 @@ namespace WinFormsApp1
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(602, 40);
+            label1.Location = new System.Drawing.Point(747, 39);
             label1.Name = "label1";
             label1.Size = new Size(75, 20);
             label1.TabIndex = 6;
@@ -147,7 +148,7 @@ namespace WinFormsApp1
             txtOutput.Name = "txtOutput";
             txtOutput.ReadOnly = true;
             txtOutput.ScrollBars = ScrollBars.Vertical;
-            txtOutput.Size = new Size(564, 513);
+            txtOutput.Size = new Size(709, 513);
             txtOutput.TabIndex = 8;
             // 
             // menuStrip1
@@ -156,7 +157,7 @@ namespace WinFormsApp1
             menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(779, 28);
+            menuStrip1.Size = new Size(916, 28);
             menuStrip1.TabIndex = 12;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -195,34 +196,41 @@ namespace WinFormsApp1
             // translateToolStripMenuItem1
             // 
             translateToolStripMenuItem1.Name = "translateToolStripMenuItem1";
-            translateToolStripMenuItem1.Size = new Size(224, 26);
+            translateToolStripMenuItem1.Size = new Size(177, 26);
             translateToolStripMenuItem1.Text = "Translate";
             translateToolStripMenuItem1.Click += translateToolStripMenuItem1_Click;
+            // 
+            // rotateToolStripMenuItem
+            // 
+            rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+            rotateToolStripMenuItem.Size = new Size(177, 26);
+            rotateToolStripMenuItem.Text = "Rotate";
+            rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
             // 
             // scaleToolStripMenuItem
             // 
             scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
-            scaleToolStripMenuItem.Size = new Size(224, 26);
+            scaleToolStripMenuItem.Size = new Size(177, 26);
             scaleToolStripMenuItem.Text = "Scale";
             scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(221, 6);
+            toolStripSeparator1.Size = new Size(174, 6);
             // 
             // copyToolStripMenuItem
             // 
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
             copyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.C;
-            copyToolStripMenuItem.Size = new Size(224, 26);
+            copyToolStripMenuItem.Size = new Size(177, 26);
             copyToolStripMenuItem.Text = "&Copy";
             copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
             // chkStartAbs
             // 
             chkStartAbs.AutoSize = true;
-            chkStartAbs.Location = new System.Drawing.Point(602, 164);
+            chkStartAbs.Location = new System.Drawing.Point(747, 163);
             chkStartAbs.Name = "chkStartAbs";
             chkStartAbs.Size = new Size(148, 24);
             chkStartAbs.TabIndex = 14;
@@ -238,7 +246,7 @@ namespace WinFormsApp1
             tabControl1.Location = new System.Drawing.Point(12, 118);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(584, 558);
+            tabControl1.Size = new Size(729, 558);
             tabControl1.TabIndex = 15;
             // 
             // tabCode
@@ -247,7 +255,7 @@ namespace WinFormsApp1
             tabCode.Location = new System.Drawing.Point(4, 29);
             tabCode.Name = "tabCode";
             tabCode.Padding = new Padding(3);
-            tabCode.Size = new Size(576, 525);
+            tabCode.Size = new Size(721, 525);
             tabCode.TabIndex = 0;
             tabCode.Text = "Code";
             tabCode.UseVisualStyleBackColor = true;
@@ -258,7 +266,7 @@ namespace WinFormsApp1
             tabPoints.Location = new System.Drawing.Point(4, 29);
             tabPoints.Name = "tabPoints";
             tabPoints.Padding = new Padding(3);
-            tabPoints.Size = new Size(576, 525);
+            tabPoints.Size = new Size(721, 525);
             tabPoints.TabIndex = 1;
             tabPoints.Text = "Points";
             tabPoints.UseVisualStyleBackColor = true;
@@ -268,12 +276,12 @@ namespace WinFormsApp1
             dgvPoints.AllowUserToAddRows = false;
             dgvPoints.AllowUserToDeleteRows = false;
             dgvPoints.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPoints.Columns.AddRange(new DataGridViewColumn[] { colIndex, colX, colY, colB });
-            dgvPoints.Location = new System.Drawing.Point(4, 4);
+            dgvPoints.Columns.AddRange(new DataGridViewColumn[] { colIndex, colX, colY, colB, colLength });
+            dgvPoints.Location = new System.Drawing.Point(6, 6);
             dgvPoints.Name = "dgvPoints";
             dgvPoints.ReadOnly = true;
             dgvPoints.RowHeadersWidth = 51;
-            dgvPoints.Size = new Size(571, 512);
+            dgvPoints.Size = new Size(709, 510);
             dgvPoints.TabIndex = 0;
             // 
             // colIndex
@@ -308,12 +316,20 @@ namespace WinFormsApp1
             colB.ReadOnly = true;
             colB.Width = 125;
             // 
+            // colLength
+            // 
+            colLength.HeaderText = "Length";
+            colLength.MinimumWidth = 6;
+            colLength.Name = "colLength";
+            colLength.ReadOnly = true;
+            colLength.Width = 125;
+            // 
             // tabView
             // 
             tabView.Controls.Add(panel1);
             tabView.Location = new System.Drawing.Point(4, 29);
             tabView.Name = "tabView";
-            tabView.Size = new Size(576, 525);
+            tabView.Size = new Size(721, 525);
             tabView.TabIndex = 2;
             tabView.Text = "View";
             tabView.UseVisualStyleBackColor = true;
@@ -322,7 +338,7 @@ namespace WinFormsApp1
             // 
             panel1.Location = new System.Drawing.Point(1, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(580, 516);
+            panel1.Size = new Size(717, 516);
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
             // 
@@ -347,7 +363,7 @@ namespace WinFormsApp1
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new System.Drawing.Point(676, 199);
+            numericUpDown1.Location = new System.Drawing.Point(821, 198);
             numericUpDown1.Maximum = new decimal(new int[] { 6, 0, 0, 0 });
             numericUpDown1.Minimum = new decimal(new int[] { 3, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
@@ -360,7 +376,7 @@ namespace WinFormsApp1
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(602, 201);
+            label2.Location = new System.Drawing.Point(747, 200);
             label2.Name = "label2";
             label2.Size = new Size(68, 20);
             label2.TabIndex = 19;
@@ -385,18 +401,11 @@ namespace WinFormsApp1
             cmbPolyline.TabIndex = 21;
             cmbPolyline.SelectedIndexChanged += cmbPolyline_SelectedIndexChanged;
             // 
-            // rotateToolStripMenuItem
-            // 
-            rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
-            rotateToolStripMenuItem.Size = new Size(224, 26);
-            rotateToolStripMenuItem.Text = "Rotate";
-            rotateToolStripMenuItem.Click += rotateToolStripMenuItem_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(779, 688);
+            ClientSize = new Size(916, 688);
             Controls.Add(cmbPolyline);
             Controls.Add(lblPolyline);
             Controls.Add(label2);
@@ -452,10 +461,6 @@ namespace WinFormsApp1
         private TabPage tabCode;
         private TabPage tabPoints;
         private DataGridView dgvPoints;
-        private DataGridViewTextBoxColumn colIndex;
-        private DataGridViewTextBoxColumn colX;
-        private DataGridViewTextBoxColumn colY;
-        private DataGridViewTextBoxColumn colB;
         private TabPage tabView;
         private Panel panel1;
         private ComboBox cmbLayer;
@@ -468,5 +473,10 @@ namespace WinFormsApp1
         private Label lblPolyline;
         private ComboBox cmbPolyline;
         private ToolStripMenuItem rotateToolStripMenuItem;
+        private DataGridViewTextBoxColumn colIndex;
+        private DataGridViewTextBoxColumn colX;
+        private DataGridViewTextBoxColumn colY;
+        private DataGridViewTextBoxColumn colB;
+        private DataGridViewTextBoxColumn colLength;
     }
 }

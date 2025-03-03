@@ -1,18 +1,16 @@
 using netDxf.Entities;
 using netDxf;
-using System.Drawing.Drawing2D;
 using DXF2NC;
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        DxfDocument doc = new();
-        Polyline2D pline = new();
-        List<Polyline2DVertex> vertices = [];
-        bool loaded = false;
-
-        string format = "0.000";
+        private DxfDocument doc = new();
+        private Polyline2D pline = new();
+        private List<Polyline2DVertex> vertices = [];
+        private bool loaded = false;
+        private string format = "0.000";
 
         public Form1()
         {
@@ -21,7 +19,7 @@ namespace WinFormsApp1
         }
 
         // Open DXF file
-        public bool OpenFromFile()
+        private bool OpenFromFile()
         {
             OpenFileDialog dialog = new()
             {
@@ -56,7 +54,6 @@ namespace WinFormsApp1
                 return false;
             }
         }
-        
 
         private void GCodeUpdate()
         {
@@ -72,15 +69,18 @@ namespace WinFormsApp1
 
                 PathGenerator pathGenerator = new();
                 txtOutput.Text = pathGenerator.GeneratePath(vertices, chkStartAbs.Checked, (int)numFeedRate.Value, format, header);
-                txtOutput.Text += Environment.NewLine + "(Length: " + pathGenerator.length.ToString(format) + ")";
+                txtOutput.Text += Environment.NewLine + "(Length: " + pathGenerator.lengths.Sum().ToString(format) + ")";
                 txtOutput.Text += Environment.NewLine + "(Time: " + pathGenerator.time.ToString(format) + "s)";
 
                 dgvPoints.Rows.Clear();
                 for (int i = 1; i <= vertices.Count; i++)
                 {
                     var v = vertices[i - 1];
-                    dgvPoints.Rows.Add(i, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
+                    var length = i <= vertices.Count && i > 1 ? pathGenerator.lengths[i - 2] : 0.0;
+                    dgvPoints.Rows.Add(i, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format), length.ToString(format));
                 }
+                dgvPoints.Rows.Add("Total", "", "", "", pathGenerator.lengths.Sum().ToString(format));
+                panel1.Refresh();
             }
         }
 
@@ -125,7 +125,23 @@ namespace WinFormsApp1
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(txtOutput.Text);
+            switch (tabControl1.SelectedIndex)
+            {
+                case 0:
+                    Clipboard.SetText(txtOutput.Text);
+                    break;
+                case 1:
+                    Clipboard.SetText(dgvPoints.SelectedCells.ToString());
+                    break;
+                case 2:
+                    Bitmap b = new(panel1.Width, panel1.Height);
+                    panel1.DrawToBitmap(b, new Rectangle(0, 0, panel1.Width, panel1.Height));
+                    Clipboard.SetImage(b);
+                    break;
+                default:
+                    break;
+            }
+            
         }
 
         private void chkStartAbs_CheckedChanged(object sender, EventArgs e)
@@ -138,11 +154,10 @@ namespace WinFormsApp1
             if (loaded)
             {
                 Graphics g = e.Graphics;
-                System.Drawing.Point[] points = new System.Drawing.Point[vertices.Count];
+
 
                 var width = panel1.Width;
                 var height = panel1.Height;
-
                 var min_x = vertices.Min(p => p.Position.X);
                 var max_x = vertices.Max(p => p.Position.X);
                 var min_y = vertices.Min(p => p.Position.Y);
@@ -151,9 +166,7 @@ namespace WinFormsApp1
                 var span_y = max_y - min_y;
                 var x_scale = (width) / span_x;
                 var y_scale = (height) / span_y;
-
                 var scale = Math.Min(x_scale, y_scale) * 0.9;
-
                 var x_offset = -min_x * scale + (width - span_x * scale) / 2;
                 var y_offset = -min_y * scale + (height - span_y * scale) / 2;
 
@@ -173,7 +186,6 @@ namespace WinFormsApp1
                         {
                             var r = (float)PathGenerator.CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
                             g.DrawString("R: " + (r / scale).ToString(format), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
-
                         }
                         else
                         {
@@ -182,14 +194,14 @@ namespace WinFormsApp1
                     }
                     else if (i == 0)
                     {
-                        g.DrawEllipse(new Pen(Color.Red, 2), x - 5, y - 5, 10, 10);
+                        g.DrawEllipse(new Pen(Color.Green, 2), x - 5, y - 5, 10, 10);
                         g.DrawString("Start", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
                         g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
                         g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
                     }
                     if (i == vertices.Count - 1)
                     {
-                        g.DrawEllipse(new Pen(Color.Green, 2), x - 5, y - 5, 10, 10);
+                        g.DrawEllipse(new Pen(Color.Red, 2), x - 5, y - 5, 10, 10);
                         g.DrawString("End", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
                         g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
                         g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
@@ -262,11 +274,12 @@ namespace WinFormsApp1
             if (rotate.DialogResult == DialogResult.OK)
             {
                 var angle = rotate.Angle;
-                var matrix4 = Matrix4.RotationZ(angle);
+                var matrix4 = Matrix4.RotationZ(angle * Math.PI / 180);
                 pline.TransformBy(matrix4);
                 vertices = [.. pline.Vertexes.Where(p => true)];
                 GCodeUpdate();
             }
         }
+
     }
 }
