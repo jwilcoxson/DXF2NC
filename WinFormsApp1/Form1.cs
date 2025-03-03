@@ -16,6 +16,7 @@ namespace WinFormsApp1
         public Form1()
         {
             InitializeComponent();
+            
         }
 
         // Calculate radius of circular move using dx, dy and DXF LWPOLYLINE 'bulge' field
@@ -71,8 +72,6 @@ namespace WinFormsApp1
 
         public void GeneratePath()
         {
-            // Get vertices of the first Polyline on the "Path" layer
-
             var start_abs = chkStartAbs.Checked;
             dgvPoints.Rows.Clear();
 
@@ -263,7 +262,7 @@ namespace WinFormsApp1
                         if (vertices[i].Bulge != 0.0)
                         {
                             var r = (float)CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
-                            g.DrawString("R: " + (r / scale).ToString("0.000"), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
+                            g.DrawString("R: " + (r / scale).ToString(format), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
 
                         }
                         else
@@ -275,11 +274,15 @@ namespace WinFormsApp1
                     {
                         g.DrawEllipse(new Pen(Color.Red, 2), x - 5, y - 5, 10, 10);
                         g.DrawString("Start", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
+                        g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
+                        g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
                     }
                     if (i == vertices.Count - 1)
                     {
                         g.DrawEllipse(new Pen(Color.Green, 2), x - 5, y - 5, 10, 10);
                         g.DrawString("End", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
+                        g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
+                        g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
                     }
                 }
             }
@@ -296,6 +299,22 @@ namespace WinFormsApp1
         {
             format = "0." + new string('0', (int)numericUpDown1.Value);
             GCodeUpdate();
+        }
+
+
+        private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var scale = new DXF2NC.Scale();
+            scale.ShowDialog();
+            if (scale.DialogResult == DialogResult.OK)
+            {
+                var x_scale = scale.XScale;
+                var y_scale = scale.YScale;
+                var matrix4 = Matrix4.Scale(x_scale, y_scale, 1);
+                pline.TransformBy(matrix4);
+                vertices = [.. pline.Vertexes.Where(p => true)];
+                GCodeUpdate();
+            }
         }
     }
 }
