@@ -50,6 +50,8 @@ namespace WinFormsApp1
                 {
                     doc = DxfDocument.Load(file_name);
                     txtFileName.Text = dialog.SafeFileName;
+                    pline = doc.Entities.Polylines2D.Where(p => p.Layer.Name == "Path").First();
+                    vertices = [.. pline.Vertexes.Where(p => true)];
                 }
                 catch (Exception ex)
                 {
@@ -67,27 +69,18 @@ namespace WinFormsApp1
         public void GeneratePath()
         {
             // Get vertices of the first Polyline on the "Path" layer
-            pline = doc.Entities.Polylines2D.Where(p => p.Layer.Name == "Path").First();
-            vertices = [.. pline.Vertexes.Where(p => true)];
-            var reverse_path = chkReversePath.Checked;
-            var invert_x = chkInvertX.Checked;
-            var invert_y = chkInvertY.Checked;
+            
             var start_abs = chkStartAbs.Checked;
             dgvPoints.Rows.Clear();
-
-            if (reverse_path)
-            {
-                vertices.Reverse();
-            }
 
             // Generate G-code header
             List<string> lines =
             [
                 "(Generated from " + txtFileName.Text + ")",
                 "(" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ")",
-                "(Invert X: " + (invert_x ? "Yes" : "No") + ")",
-                "(Invert Y: " + (invert_y ? "Yes" : "No") + ")",
-                "(Reverse Path: " + (reverse_path ? "Yes" : "No") + ")",
+                "(Invert X: " + (chkInvertX.Checked ? "Yes" : "No") + ")",
+                "(Invert Y: " + (chkInvertY.Checked ? "Yes" : "No") + ")",
+                "(Reverse Path: " + (chkReversePath.Checked ? "Yes" : "No") + ")",
                 "N" + LineCounter() + " F" + numFeedRate.Value,
             ];
 
@@ -107,11 +100,6 @@ namespace WinFormsApp1
                 var y = v.Position.Y;
                 var dx = x - prev_x;
                 var dy = y - prev_y;
-
-                dx = invert_x ? -dx : dx;
-                dx = (dx == double.NegativeZero) ? 0.0 : dx;
-                dy = invert_y ? -dy : dy;
-                dy = (dy == double.NegativeZero) ? 0.0 : dy;
 
                 // If completing circular move, calculate radius
                 if (circ)
@@ -183,16 +171,30 @@ namespace WinFormsApp1
 
         private void chkInvertX_CheckedChanged(object sender, EventArgs e)
         {
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                var position = vertices[i].Position;
+                position.X = -position.X;
+                vertices[i].Position = position;
+            }
             GCodeUpdate();
         }
 
         private void chkInvertY_CheckedChanged(object sender, EventArgs e)
         {
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                var position = vertices[i].Position;
+                position.Y = -position.Y;
+                vertices[i].Position = position;
+            }
             GCodeUpdate();
         }
 
         private void chkReversePath_CheckedChanged(object sender, EventArgs e)
         {
+            pline.Reverse();
+            vertices = [.. pline.Vertexes.Where(p => true)];
             GCodeUpdate();
         }
 
@@ -236,15 +238,11 @@ namespace WinFormsApp1
                 var max_x = vertices.Max(p => p.Position.X);
                 var min_y = vertices.Min(p => p.Position.Y);
                 var max_y = vertices.Max(p => p.Position.Y);
-
                 var dx = max_x - min_x;
                 var dy = max_y - min_y;
-
                 var margin = 10;
-
                 var x_scale = (width - 2 * margin) / dx;
                 var y_scale = (height - 2 * margin) / dy;
-
                 var x_offset = -min_x * x_scale;
                 var y_offset = -min_y * y_scale;
 
