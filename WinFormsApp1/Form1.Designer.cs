@@ -56,7 +56,6 @@ namespace WinFormsApp1
             rotateToolStripMenuItem1 = new ToolStripMenuItem();
             scaleToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
-            copyToolStripMenuItem = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabCode = new TabPage();
             tabPoints = new TabPage();
@@ -67,6 +66,14 @@ namespace WinFormsApp1
             colB = new DataGridViewTextBoxColumn();
             tabView = new TabPage();
             panel1 = new Panel();
+            tabTraversing = new TabPage();
+            dgvTraversing = new DataGridView();
+            colTraversingIndex = new DataGridViewTextBoxColumn();
+            colCmd = new DataGridViewTextBoxColumn();
+            colTraversingX = new DataGridViewTextBoxColumn();
+            colTraversingY = new DataGridViewTextBoxColumn();
+            colTraversingVX = new DataGridViewTextBoxColumn();
+            colTraversingVY = new DataGridViewTextBoxColumn();
             cmbLayer = new ComboBox();
             lblLayer = new Label();
             lblPolyline = new Label();
@@ -82,14 +89,6 @@ namespace WinFormsApp1
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem5 = new ToolStripMenuItem();
-            tabTraversing = new TabPage();
-            dgvTraversing = new DataGridView();
-            colTraversingIndex = new DataGridViewTextBoxColumn();
-            colCmd = new DataGridViewTextBoxColumn();
-            colTraversingX = new DataGridViewTextBoxColumn();
-            colTraversingY = new DataGridViewTextBoxColumn();
-            colTraversingVX = new DataGridViewTextBoxColumn();
-            colTraversingVY = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -97,9 +96,9 @@ namespace WinFormsApp1
             tabPoints.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvPoints).BeginInit();
             tabView.SuspendLayout();
-            toolStrip1.SuspendLayout();
             tabTraversing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTraversing).BeginInit();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // numFeedRate
@@ -172,7 +171,7 @@ namespace WinFormsApp1
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, rotateToolStripMenuItem, scaleToolStripMenuItem, toolStripSeparator1, copyToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, rotateToolStripMenuItem, scaleToolStripMenuItem, toolStripSeparator1 });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.E;
             editToolStripMenuItem.Size = new Size(49, 24);
@@ -182,7 +181,7 @@ namespace WinFormsApp1
             // 
             translateToolStripMenuItem1.Name = "translateToolStripMenuItem1";
             translateToolStripMenuItem1.ShortcutKeys = Keys.Control | Keys.T;
-            translateToolStripMenuItem1.Size = new Size(201, 26);
+            translateToolStripMenuItem1.Size = new Size(224, 26);
             translateToolStripMenuItem1.Text = "Translate";
             translateToolStripMenuItem1.Click += translateToolStripMenuItem1_Click;
             // 
@@ -190,7 +189,7 @@ namespace WinFormsApp1
             // 
             rotateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clockwiseToolStripMenuItem, counterClockwiseToolStripMenuItem, rotateToolStripMenuItem1 });
             rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
-            rotateToolStripMenuItem.Size = new Size(201, 26);
+            rotateToolStripMenuItem.Size = new Size(224, 26);
             rotateToolStripMenuItem.Text = "Rotate";
             // 
             // clockwiseToolStripMenuItem
@@ -218,22 +217,14 @@ namespace WinFormsApp1
             // 
             scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
             scaleToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            scaleToolStripMenuItem.Size = new Size(201, 26);
+            scaleToolStripMenuItem.Size = new Size(224, 26);
             scaleToolStripMenuItem.Text = "Scale";
             scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(198, 6);
-            // 
-            // copyToolStripMenuItem
-            // 
-            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.C;
-            copyToolStripMenuItem.Size = new Size(201, 26);
-            copyToolStripMenuItem.Text = "&Copy";
-            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
+            toolStripSeparator1.Size = new Size(221, 6);
             // 
             // tabControl1
             // 
@@ -329,6 +320,78 @@ namespace WinFormsApp1
             panel1.Size = new Size(777, 545);
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
+            // 
+            // tabTraversing
+            // 
+            tabTraversing.Controls.Add(dgvTraversing);
+            tabTraversing.Location = new System.Drawing.Point(4, 29);
+            tabTraversing.Name = "tabTraversing";
+            tabTraversing.Padding = new Padding(3);
+            tabTraversing.Size = new Size(781, 551);
+            tabTraversing.TabIndex = 3;
+            tabTraversing.Text = "Traversing";
+            tabTraversing.UseVisualStyleBackColor = true;
+            // 
+            // dgvTraversing
+            // 
+            dgvTraversing.AllowUserToAddRows = false;
+            dgvTraversing.AllowUserToDeleteRows = false;
+            dgvTraversing.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvTraversing.Columns.AddRange(new DataGridViewColumn[] { colTraversingIndex, colCmd, colTraversingX, colTraversingY, colTraversingVX, colTraversingVY });
+            dgvTraversing.Location = new System.Drawing.Point(0, 0);
+            dgvTraversing.Name = "dgvTraversing";
+            dgvTraversing.ReadOnly = true;
+            dgvTraversing.RowHeadersWidth = 51;
+            dgvTraversing.Size = new Size(781, 534);
+            dgvTraversing.TabIndex = 0;
+            // 
+            // colTraversingIndex
+            // 
+            colTraversingIndex.HeaderText = "Index";
+            colTraversingIndex.MinimumWidth = 6;
+            colTraversingIndex.Name = "colTraversingIndex";
+            colTraversingIndex.ReadOnly = true;
+            colTraversingIndex.Width = 80;
+            // 
+            // colCmd
+            // 
+            colCmd.HeaderText = "Command";
+            colCmd.MinimumWidth = 6;
+            colCmd.Name = "colCmd";
+            colCmd.ReadOnly = true;
+            colCmd.Width = 125;
+            // 
+            // colTraversingX
+            // 
+            colTraversingX.HeaderText = "X";
+            colTraversingX.MinimumWidth = 6;
+            colTraversingX.Name = "colTraversingX";
+            colTraversingX.ReadOnly = true;
+            colTraversingX.Width = 125;
+            // 
+            // colTraversingY
+            // 
+            colTraversingY.HeaderText = "Y";
+            colTraversingY.MinimumWidth = 6;
+            colTraversingY.Name = "colTraversingY";
+            colTraversingY.ReadOnly = true;
+            colTraversingY.Width = 125;
+            // 
+            // colTraversingVX
+            // 
+            colTraversingVX.HeaderText = "Vx";
+            colTraversingVX.MinimumWidth = 6;
+            colTraversingVX.Name = "colTraversingVX";
+            colTraversingVX.ReadOnly = true;
+            colTraversingVX.Width = 125;
+            // 
+            // colTraversingVY
+            // 
+            colTraversingVY.HeaderText = "Vy";
+            colTraversingVY.MinimumWidth = 6;
+            colTraversingVY.Name = "colTraversingVY";
+            colTraversingVY.ReadOnly = true;
+            colTraversingVY.Width = 125;
             // 
             // cmbLayer
             // 
@@ -470,78 +533,6 @@ namespace WinFormsApp1
             toolStripMenuItem5.Text = "0.000000";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
-            // tabTraversing
-            // 
-            tabTraversing.Controls.Add(dgvTraversing);
-            tabTraversing.Location = new System.Drawing.Point(4, 29);
-            tabTraversing.Name = "tabTraversing";
-            tabTraversing.Padding = new Padding(3);
-            tabTraversing.Size = new Size(781, 551);
-            tabTraversing.TabIndex = 3;
-            tabTraversing.Text = "Traversing";
-            tabTraversing.UseVisualStyleBackColor = true;
-            // 
-            // dgvTraversing
-            // 
-            dgvTraversing.AllowUserToAddRows = false;
-            dgvTraversing.AllowUserToDeleteRows = false;
-            dgvTraversing.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTraversing.Columns.AddRange(new DataGridViewColumn[] { colTraversingIndex, colCmd, colTraversingX, colTraversingY, colTraversingVX, colTraversingVY });
-            dgvTraversing.Location = new System.Drawing.Point(0, 0);
-            dgvTraversing.Name = "dgvTraversing";
-            dgvTraversing.ReadOnly = true;
-            dgvTraversing.RowHeadersWidth = 51;
-            dgvTraversing.Size = new Size(781, 534);
-            dgvTraversing.TabIndex = 0;
-            // 
-            // colTraversingIndex
-            // 
-            colTraversingIndex.HeaderText = "Index";
-            colTraversingIndex.MinimumWidth = 6;
-            colTraversingIndex.Name = "colTraversingIndex";
-            colTraversingIndex.ReadOnly = true;
-            colTraversingIndex.Width = 80;
-            // 
-            // colCmd
-            // 
-            colCmd.HeaderText = "Command";
-            colCmd.MinimumWidth = 6;
-            colCmd.Name = "colCmd";
-            colCmd.ReadOnly = true;
-            colCmd.Width = 125;
-            // 
-            // colTraversingX
-            // 
-            colTraversingX.HeaderText = "X";
-            colTraversingX.MinimumWidth = 6;
-            colTraversingX.Name = "colTraversingX";
-            colTraversingX.ReadOnly = true;
-            colTraversingX.Width = 125;
-            // 
-            // colTraversingY
-            // 
-            colTraversingY.HeaderText = "Y";
-            colTraversingY.MinimumWidth = 6;
-            colTraversingY.Name = "colTraversingY";
-            colTraversingY.ReadOnly = true;
-            colTraversingY.Width = 125;
-            // 
-            // colTraversingVX
-            // 
-            colTraversingVX.HeaderText = "Vx";
-            colTraversingVX.MinimumWidth = 6;
-            colTraversingVX.Name = "colTraversingVX";
-            colTraversingVX.ReadOnly = true;
-            colTraversingVX.Width = 125;
-            // 
-            // colTraversingVY
-            // 
-            colTraversingVY.HeaderText = "Vy";
-            colTraversingVY.MinimumWidth = 6;
-            colTraversingVY.Name = "colTraversingVY";
-            colTraversingVY.ReadOnly = true;
-            colTraversingVY.Width = 125;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -572,10 +563,10 @@ namespace WinFormsApp1
             tabPoints.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvPoints).EndInit();
             tabView.ResumeLayout(false);
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
             tabTraversing.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTraversing).EndInit();
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -591,7 +582,6 @@ namespace WinFormsApp1
         private ToolStripMenuItem openToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem copyToolStripMenuItem;
         private TabControl tabControl1;
         private TabPage tabCode;
         private TabPage tabPoints;

@@ -118,36 +118,6 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            switch (tabControl1.SelectedIndex)
-            {
-                case 0:
-                    Clipboard.SetText(txtOutput.Text);
-                    break;
-                case 1:
-                    var text = "";
-                    foreach (DataGridViewRow row in dgvPoints.SelectedRows)
-                    {
-                        foreach (DataGridViewCell cell in row.Cells)
-                        {
-                            text += cell.Value.ToString() + "\t";
-                        }
-                        text += Environment.NewLine;
-                    }
-                    Clipboard.SetText(text);
-                    break;
-                case 2:
-                    Bitmap b = new(panel1.Width, panel1.Height);
-                    panel1.DrawToBitmap(b, new Rectangle(0, 0, panel1.Width, panel1.Height));
-                    Clipboard.SetImage(b);
-                    break;
-                default:
-                    break;
-            }
-
-        }
-
         private void chkStartAbs_CheckedChanged(object sender, EventArgs e)
         {
             GCodeUpdate();
