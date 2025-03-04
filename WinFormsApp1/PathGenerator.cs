@@ -10,19 +10,63 @@ using static System.Windows.Forms.DataFormats;
 
 namespace DXF2NC
 {
-    class PathGenerator
-    {
-        int count = 0;
-        public List<double> lengths = [];
-        public double time = 0.0;
 
-        // Generate incremental line numbers
-        private string LineCounter()
+    class GCodeCommand
+    {
+        public string Command = "";
+        public double X = 0.0;
+        public double Y = 0.0;
+        public double FeedRate = 0.0;
+        public double Bulge = 0.0;
+        public double Radius = 0.0;
+        public double Length = 0.0;
+        public double Time = 0.0;
+        public double XVelocity = 0.0;
+        public double YVelocity = 0.0;
+
+        public GCodeCommand(string command, double x = 0.0, double y = 0.0, double radius = 0.0, double feed_rate = 1000.0)
         {
-            count = count + 10;
-            return count.ToString("D4");
+            Command = command;
+            X = x;
+            Y = y;
+            Radius = radius;
+            FeedRate = feed_rate;
+            switch (command)
+            {
+                case "G01":
+                    Length = Math.Sqrt(x * x + y * y);
+                    Time = Length / feed_rate * 60;
+                    XVelocity = x / Time;
+                    YVelocity = y / Time;
+                    break;
+                case "G02":
+                case "G03":
+                    Length = PathGenerator.CalculateArcLength(x, y, radius);
+                    Time = Length / feed_rate * 60;
+                    break;
+            }
         }
 
+        public string ToString(string format)
+        {
+            if (Command == "G01" || Command == "G01")
+            {
+                return Command + " X" + X.ToString(format) + " Y" + Y.ToString(format);
+            }
+            else if (Command == "G02" || Command == "G03")
+            { 
+                return Command + " X" + X.ToString(format) + " Y" + Y.ToString(format) + " U" + Radius.ToString(format); 
+            }
+            else
+            {
+                return Command;
+            }
+
+        }
+    }
+
+    class PathGenerator
+    {
 
         // Calculate radius of circular move using dx, dy and DXF LWPOLYLINE 'bulge' field
         public static double CalcRadius(double dx, double dy, double b)
@@ -33,25 +77,19 @@ namespace DXF2NC
             return Math.Abs(r);
         }
 
-        public static double CalculateArcLength(double x1, double y1, double x2, double y2, double bulge)
+        public static double CalculateArcLength(double dx, double dy, double radius)
         {
-            var chordLength = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
-            var theta = 4 * Math.Atan(Math.Abs(bulge));
-            var radius = chordLength / (2 * Math.Sin(theta / 2));
+            var chordLength = Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dy, 2));
+            var theta = 2 * Math.Asin(chordLength / (2 * radius));
             var arcLength = radius * theta;
             return arcLength;
         }
 
 
-        public string GeneratePath(List<Polyline2DVertex> vertices, bool start_abs=false, int feed_rate=5000, string format="0.000", string header="", string footer="")
+        public List<GCodeCommand> GeneratePath(List<Polyline2DVertex> vertices, bool start_abs = false, int feed_rate = 5000)
         {
 
-            // Generate G-code header
-            List<string> lines =
-            [
-                header,
-                "N" + LineCounter() + " F" + feed_rate,
-            ];
+            List<GCodeCommand> cmds = [];
 
             var b = 0.0;
             var circ = false;
@@ -87,36 +125,27 @@ namespace DXF2NC
 
                 if (ReferenceEquals(v, vertices.First()))
                 {
-                    if (start_abs)
-                    {
-                        lines.Add("(Absolute positioning)");
-                        lines.Add("N" + LineCounter() + " G90");
-                        lines.Add("(Rapid move to start point)");
-                        lines.Add("N" + LineCounter() + " G00 X" + dx.ToString(format) + " Y" + dy.ToString(format));
-                    }
-                    lines.Add("(Relative positioning)");
-                    lines.Add("N" + LineCounter() + " G91");
-                    lines.Add("(Path)");
+                    cmds.Add(new GCodeCommand("G90"));
+                    cmds.Add(new GCodeCommand("F" + feed_rate.ToString("0")));
+                    cmds.Add(new GCodeCommand("G00", x, y, 0.0, feed_rate));
+                    cmds.Add(new GCodeCommand("G91"));
                 }
                 else
                 {
                     // G02: Clockwise move
                     if (cw_move)
                     {
-                        lengths.Add(CalculateArcLength(prev_x, prev_y, x, y, b));
-                        lines.Add("N" + LineCounter() + " G02 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
+                        cmds.Add(new GCodeCommand("G02", dx, dy, r, feed_rate));
                     }
                     // G03: Counterclockwise move
                     else if (ccw_move)
                     {
-                        lengths.Add(CalculateArcLength(prev_x, prev_y, x, y, b));
-                        lines.Add("N" + LineCounter() + " G03 X" + dx.ToString(format) + " Y" + dy.ToString(format) + " U" + r.ToString(format));
+                        cmds.Add(new GCodeCommand("G03", dx, dy, r, feed_rate));
                     }
                     // G01: Linear Move
                     else
                     {
-                        lengths.Add(Math.Sqrt(dx * dx + dy * dy));
-                        lines.Add("N" + LineCounter() + " G01 X" + dx.ToString(format) + " Y" + dy.ToString(format));
+                        cmds.Add(new GCodeCommand("G01", dx, dy, 0.0, feed_rate));
                     }
                 }
 
@@ -124,10 +153,7 @@ namespace DXF2NC
                 prev_y = y;
 
             }
-            lines.Add("N" + LineCounter() + " M30");
-            lines.Add(footer);
-            time = lengths.Sum() / feed_rate * 60;
-            return string.Join(Environment.NewLine, lines);
+            return cmds;
         }
     }
 }

@@ -11,11 +11,19 @@ namespace WinFormsApp1
         private List<Polyline2DVertex> vertices = [];
         private bool loaded = false;
         private string format = "0.000";
+        private List<DXF2NC.GCodeCommand> commands = [];
+        private int line_counter = 0;
 
         public Form1()
         {
             InitializeComponent();
 
+        }
+
+        private string LineCounter()
+        {
+            line_counter += 10;
+            return "N" + line_counter.ToString("D4");
         }
 
         // Open DXF file
@@ -59,24 +67,26 @@ namespace WinFormsApp1
         {
             if (loaded)
             {
-                var header = "(Generated from " + doc.Name + " on " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ")" + Environment.NewLine;
-                header += "(Layer: " + pline.Layer.Name + ")" + Environment.NewLine;
-                header += "(Handle: " + pline.Handle + ")" + Environment.NewLine;
-                header += "(Vertices: " + vertices.Count + ")" + Environment.NewLine;
-
+                line_counter = 0;
                 PathGenerator pathGenerator = new();
-                txtOutput.Text = pathGenerator.GeneratePath(vertices, false, (int)numFeedRate.Value, format, header);
-                txtOutput.Text += Environment.NewLine + "(Length: " + pathGenerator.lengths.Sum().ToString(format) + ")";
-                txtOutput.Text += Environment.NewLine + "(Time: " + pathGenerator.time.ToString(format) + "s)";
-
+                this.commands = pathGenerator.GeneratePath(vertices, false, (int)numFeedRate.Value);
+                txtOutput.Text = string.Join(Environment.NewLine, commands.Select(p => LineCounter() + " " + p.ToString(format)));
+                txtOutput.Text += Environment.NewLine + "(Length: " + commands.Sum(p => p.Length).ToString(format) + ")";
+                txtOutput.Text += Environment.NewLine + "(Time: " + commands.Sum(p => p.Time).ToString(format) + "s)";
                 dgvPoints.Rows.Clear();
-                for (int i = 1; i <= vertices.Count; i++)
+                var index = 1;
+                foreach (var v in vertices)
                 {
-                    var v = vertices[i - 1];
-                    var length = i <= vertices.Count && i > 1 ? pathGenerator.lengths[i - 2] : 0.0;
-                    dgvPoints.Rows.Add(i, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format), length.ToString(format));
+                    dgvPoints.Rows.Add(index, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
+                    index++;
                 }
-                dgvPoints.Rows.Add("Total", "", "", "", pathGenerator.lengths.Sum().ToString(format));
+                dgvTraversing.Rows.Clear();
+                index = 1;
+                foreach (var c in commands)
+                {
+                    dgvTraversing.Rows.Add(index, c.Command, c.X.ToString(format), c.Y.ToString(format), c.XVelocity.ToString(format), c.YVelocity.ToString(format));
+                    index++;
+                }
                 panel1.Refresh();
             }
         }
@@ -104,6 +114,7 @@ namespace WinFormsApp1
             invertXToolStripButton.Enabled = loaded;
             invertYToolStripButton.Enabled = loaded;
             reversePathToolStripButton.Enabled = loaded;
+            toolStripDropDownButton1.Enabled = loaded;
             GCodeUpdate();
         }
 
@@ -216,13 +227,6 @@ namespace WinFormsApp1
             }
         }
 
-        private void numPrecision_ValueChanged(object sender, EventArgs e)
-        {
-            format = "0." + new string('0', (int)numericUpDown1.Value);
-            GCodeUpdate();
-        }
-
-
         private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var scale = new DXF2NC.Scale();
@@ -327,6 +331,72 @@ namespace WinFormsApp1
         private void tabCode_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void dgvPoints_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dgvPoints_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var pos = vertices[e.RowIndex].Position;
+            switch (e.ColumnIndex)
+            {
+                case 1:
+                    pos.X = double.Parse(dgvPoints.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString());
+                    vertices[e.RowIndex].Position = pos;
+                    break;
+                case 2:
+                    pos.Y = double.Parse(dgvPoints.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString());
+                    vertices[e.RowIndex].Position = pos;
+                    break;
+                case 3:
+                    vertices[e.RowIndex].Bulge = double.Parse(dgvPoints.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString());
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            format = "0.000";
+            toolStripMenuItem2.Checked = true;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            GCodeUpdate();
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            format = "0.0000";
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = true;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            GCodeUpdate();
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            format = "0.00000";
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = true;
+            toolStripMenuItem5.Checked = false;
+            GCodeUpdate();
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            format = "0.000000";
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = true;
+            GCodeUpdate();
         }
     }
 }
