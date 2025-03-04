@@ -89,6 +89,7 @@ namespace WinFormsApp1
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem5 = new ToolStripMenuItem();
+            closeToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -147,7 +148,7 @@ namespace WinFormsApp1
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openToolStripMenuItem, closeToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.F;
             fileToolStripMenuItem.Size = new Size(46, 24);
@@ -157,7 +158,7 @@ namespace WinFormsApp1
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(181, 26);
+            openToolStripMenuItem.Size = new Size(224, 26);
             openToolStripMenuItem.Text = "&Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
@@ -165,7 +166,7 @@ namespace WinFormsApp1
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.X;
-            exitToolStripMenuItem.Size = new Size(181, 26);
+            exitToolStripMenuItem.Size = new Size(224, 26);
             exitToolStripMenuItem.Text = "E&xit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -181,7 +182,7 @@ namespace WinFormsApp1
             // 
             translateToolStripMenuItem1.Name = "translateToolStripMenuItem1";
             translateToolStripMenuItem1.ShortcutKeys = Keys.Control | Keys.T;
-            translateToolStripMenuItem1.Size = new Size(224, 26);
+            translateToolStripMenuItem1.Size = new Size(201, 26);
             translateToolStripMenuItem1.Text = "Translate";
             translateToolStripMenuItem1.Click += translateToolStripMenuItem1_Click;
             // 
@@ -189,7 +190,7 @@ namespace WinFormsApp1
             // 
             rotateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clockwiseToolStripMenuItem, counterClockwiseToolStripMenuItem, rotateToolStripMenuItem1 });
             rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
-            rotateToolStripMenuItem.Size = new Size(224, 26);
+            rotateToolStripMenuItem.Size = new Size(201, 26);
             rotateToolStripMenuItem.Text = "Rotate";
             // 
             // clockwiseToolStripMenuItem
@@ -217,14 +218,14 @@ namespace WinFormsApp1
             // 
             scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
             scaleToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            scaleToolStripMenuItem.Size = new Size(224, 26);
+            scaleToolStripMenuItem.Size = new Size(201, 26);
             scaleToolStripMenuItem.Text = "Scale";
             scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(221, 6);
+            toolStripSeparator1.Size = new Size(198, 6);
             // 
             // tabControl1
             // 
@@ -533,6 +534,13 @@ namespace WinFormsApp1
             toolStripMenuItem5.Text = "0.000000";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
+            // closeToolStripMenuItem
+            // 
+            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            closeToolStripMenuItem.Size = new Size(224, 26);
+            closeToolStripMenuItem.Text = "Close";
+            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -622,5 +630,6 @@ namespace WinFormsApp1
         private DataGridViewTextBoxColumn colTraversingY;
         private DataGridViewTextBoxColumn colTraversingVX;
         private DataGridViewTextBoxColumn colTraversingVY;
+        private ToolStripMenuItem closeToolStripMenuItem;
     }
 }

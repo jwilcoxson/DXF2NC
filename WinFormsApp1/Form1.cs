@@ -104,17 +104,16 @@ namespace WinFormsApp1
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             loaded = OpenFromFile();
-            cmbLayer.Enabled = loaded;
-            cmbPolyline.Enabled = loaded;
-            rotateToolStripMenuItem.Enabled = loaded;
-            scaleToolStripMenuItem.Enabled = loaded;
-            translateToolStripMenuItem1.Enabled = loaded;
-            rotLeftToolStripButton1.Enabled = loaded;
-            rotRightToolStripButton1.Enabled = loaded;
-            invertXToolStripButton.Enabled = loaded;
-            invertYToolStripButton.Enabled = loaded;
-            reversePathToolStripButton.Enabled = loaded;
-            toolStripDropDownButton1.Enabled = loaded;
+            if (loaded)
+            {
+                cmbLayer.SelectedIndex = 0;
+                cmbLayer.Enabled = true;
+                cmbPolyline.Enabled = true;
+                foreach (ToolStripItem t in toolStrip1.Items)
+                {
+                    t.Enabled = true;
+                }
+            }
             GCodeUpdate();
         }
 
@@ -367,6 +366,26 @@ namespace WinFormsApp1
             toolStripMenuItem4.Checked = false;
             toolStripMenuItem5.Checked = true;
             GCodeUpdate();
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            doc = new();
+            pline = new();
+            vertices = [];
+            loaded = false;
+            this.Text = "DXF2NC";
+            txtOutput.Text = "";
+            dgvPoints.Rows.Clear();
+            dgvTraversing.Rows.Clear();
+            cmbLayer.Items.Clear();
+            cmbLayer.Enabled = false;
+            cmbPolyline.Items.Clear();
+            cmbPolyline.Enabled = false;
+            foreach (ToolStripItem t in toolStrip1.Items)
+            {
+                t.Enabled = false;
+            }
         }
     }
 }
