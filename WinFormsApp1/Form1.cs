@@ -63,12 +63,9 @@ namespace WinFormsApp1
                 header += "(Layer: " + pline.Layer.Name + ")" + Environment.NewLine;
                 header += "(Handle: " + pline.Handle + ")" + Environment.NewLine;
                 header += "(Vertices: " + vertices.Count + ")" + Environment.NewLine;
-                header += "(Invert X: " + chkInvertX.Checked + ")" + Environment.NewLine;
-                header += "(Invert Y: " + chkInvertY.Checked + ")" + Environment.NewLine;
-                header += "(Reverse Path: " + chkReversePath.Checked + ")";
 
                 PathGenerator pathGenerator = new();
-                txtOutput.Text = pathGenerator.GeneratePath(vertices, chkStartAbs.Checked, (int)numFeedRate.Value, format, header);
+                txtOutput.Text = pathGenerator.GeneratePath(vertices, false, (int)numFeedRate.Value, format, header);
                 txtOutput.Text += Environment.NewLine + "(Length: " + pathGenerator.lengths.Sum().ToString(format) + ")";
                 txtOutput.Text += Environment.NewLine + "(Time: " + pathGenerator.time.ToString(format) + "s)";
 
@@ -84,29 +81,6 @@ namespace WinFormsApp1
             }
         }
 
-        private void chkInvertX_CheckedChanged(object sender, EventArgs e)
-        {
-            var matrix4 = Matrix4.Scale(-1, 1, 1);
-            pline.TransformBy(matrix4);
-            vertices = [.. pline.Vertexes.Where(p => true)];
-            GCodeUpdate();
-        }
-
-        private void chkInvertY_CheckedChanged(object sender, EventArgs e)
-        {
-            var matrix4 = Matrix4.Scale(1, -1, 1);
-            pline.TransformBy(matrix4);
-            vertices = [.. pline.Vertexes.Where(p => true)];
-            GCodeUpdate();
-        }
-
-        private void chkReversePath_CheckedChanged(object sender, EventArgs e)
-        {
-            pline.Reverse();
-            vertices = [.. pline.Vertexes.Where(p => true)];
-            GCodeUpdate();
-        }
-
         private void numFeedRate_ValueChanged(object sender, EventArgs e)
         {
             GCodeUpdate();
@@ -120,6 +94,16 @@ namespace WinFormsApp1
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             loaded = OpenFromFile();
+            cmbLayer.Enabled = loaded;
+            cmbPolyline.Enabled = loaded;
+            rotateToolStripMenuItem.Enabled = loaded;
+            scaleToolStripMenuItem.Enabled = loaded;
+            translateToolStripMenuItem1.Enabled = loaded;
+            rotLeftToolStripButton1.Enabled = loaded;
+            rotRightToolStripButton1.Enabled = loaded;
+            invertXToolStripButton.Enabled = loaded;
+            invertYToolStripButton.Enabled = loaded;
+            reversePathToolStripButton.Enabled = loaded;
             GCodeUpdate();
         }
 
@@ -131,7 +115,16 @@ namespace WinFormsApp1
                     Clipboard.SetText(txtOutput.Text);
                     break;
                 case 1:
-                    Clipboard.SetText(dgvPoints.SelectedCells.ToString());
+                    var text = "";
+                    foreach (DataGridViewRow row in dgvPoints.SelectedRows)
+                    {
+                        foreach (DataGridViewCell cell in row.Cells)
+                        {
+                            text += cell.Value.ToString() + "\t";
+                        }
+                        text += Environment.NewLine;
+                    }
+                    Clipboard.SetText(text);
                     break;
                 case 2:
                     Bitmap b = new(panel1.Width, panel1.Height);
@@ -141,7 +134,7 @@ namespace WinFormsApp1
                 default:
                     break;
             }
-            
+
         }
 
         private void chkStartAbs_CheckedChanged(object sender, EventArgs e)
@@ -267,7 +260,40 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void rotateToolStripMenuItem_Click(object sender, EventArgs e)
+
+        private void rotLeftToolStripButton1_Click(object sender, EventArgs e)
+        {
+            var angle = -90;
+            var matrix4 = Matrix4.RotationZ(angle * Math.PI / 180);
+            pline.TransformBy(matrix4);
+            GCodeUpdate();
+        }
+
+        private void rotRightToolStripButton1_Click(object sender, EventArgs e)
+        {
+            var angle = 90;
+            var matrix4 = Matrix4.RotationZ(angle * Math.PI / 180);
+            pline.TransformBy(matrix4);
+            GCodeUpdate();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            var matrix4 = Matrix4.Scale(-1, 1, 1);
+            pline.TransformBy(matrix4);
+            vertices = [.. pline.Vertexes.Where(p => true)];
+            GCodeUpdate();
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            var matrix4 = Matrix4.Scale(1, -1, 1);
+            pline.TransformBy(matrix4);
+            vertices = [.. pline.Vertexes.Where(p => true)];
+            GCodeUpdate();
+        }
+
+        private void rotateToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var rotate = new DXF2NC.Rotate();
             rotate.ShowDialog();
@@ -281,5 +307,26 @@ namespace WinFormsApp1
             }
         }
 
+        private void clockwiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotLeftToolStripButton1_Click(sender, e);
+        }
+
+        private void counterClockwiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotRightToolStripButton1_Click(sender, e);
+        }
+
+        private void reversePathToolStripButton_Click(object sender, EventArgs e)
+        {
+            pline.Reverse();
+            vertices = [.. pline.Vertexes.Where(p => true)];
+            GCodeUpdate();
+        }
+
+        private void tabCode_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
