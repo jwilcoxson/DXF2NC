@@ -47,6 +47,7 @@ namespace WinFormsApp1
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             openToolStripMenuItem = new ToolStripMenuItem();
+            closeToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
             translateToolStripMenuItem1 = new ToolStripMenuItem();
@@ -65,7 +66,7 @@ namespace WinFormsApp1
             colY = new DataGridViewTextBoxColumn();
             colB = new DataGridViewTextBoxColumn();
             tabView = new TabPage();
-            panel1 = new Panel();
+            pictureBox1 = new PictureBox();
             tabTraversing = new TabPage();
             dgvTraversing = new DataGridView();
             colTraversingIndex = new DataGridViewTextBoxColumn();
@@ -89,7 +90,6 @@ namespace WinFormsApp1
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem5 = new ToolStripMenuItem();
-            closeToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numFeedRate).BeginInit();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -97,6 +97,7 @@ namespace WinFormsApp1
             tabPoints.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvPoints).BeginInit();
             tabView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabTraversing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvTraversing).BeginInit();
             toolStrip1.SuspendLayout();
@@ -158,15 +159,22 @@ namespace WinFormsApp1
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
             openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(224, 26);
+            openToolStripMenuItem.Size = new Size(181, 26);
             openToolStripMenuItem.Text = "&Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            // 
+            // closeToolStripMenuItem
+            // 
+            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            closeToolStripMenuItem.Size = new Size(181, 26);
+            closeToolStripMenuItem.Text = "Close";
+            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.X;
-            exitToolStripMenuItem.Size = new Size(224, 26);
+            exitToolStripMenuItem.Size = new Size(181, 26);
             exitToolStripMenuItem.Text = "E&xit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -249,7 +257,6 @@ namespace WinFormsApp1
             tabCode.TabIndex = 0;
             tabCode.Text = "Code";
             tabCode.UseVisualStyleBackColor = true;
-            tabCode.Click += tabCode_Click;
             // 
             // tabPoints
             // 
@@ -273,7 +280,6 @@ namespace WinFormsApp1
             dgvPoints.RowHeadersWidth = 51;
             dgvPoints.Size = new Size(769, 539);
             dgvPoints.TabIndex = 0;
-            dgvPoints.CellContentClick += dgvPoints_CellContentClick;
             dgvPoints.CellEndEdit += dgvPoints_CellEndEdit;
             // 
             // colIndex
@@ -306,21 +312,23 @@ namespace WinFormsApp1
             // 
             // tabView
             // 
-            tabView.Controls.Add(panel1);
+            tabView.Controls.Add(pictureBox1);
             tabView.Location = new System.Drawing.Point(4, 29);
             tabView.Name = "tabView";
             tabView.Size = new Size(781, 551);
             tabView.TabIndex = 2;
             tabView.Text = "View";
             tabView.UseVisualStyleBackColor = true;
+            tabView.Paint += tabView_Paint;
             // 
-            // panel1
+            // pictureBox1
             // 
-            panel1.Location = new System.Drawing.Point(1, 3);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(777, 545);
-            panel1.TabIndex = 0;
-            panel1.Paint += panel1_Paint;
+            pictureBox1.Location = new System.Drawing.Point(3, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(775, 545);
+            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
             // 
             // tabTraversing
             // 
@@ -534,13 +542,6 @@ namespace WinFormsApp1
             toolStripMenuItem5.Text = "0.000000";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
-            // closeToolStripMenuItem
-            // 
-            closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            closeToolStripMenuItem.Size = new Size(224, 26);
-            closeToolStripMenuItem.Text = "Close";
-            closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -571,6 +572,7 @@ namespace WinFormsApp1
             tabPoints.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvPoints).EndInit();
             tabView.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tabTraversing.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvTraversing).EndInit();
             toolStrip1.ResumeLayout(false);
@@ -595,7 +597,6 @@ namespace WinFormsApp1
         private TabPage tabPoints;
         private DataGridView dgvPoints;
         private TabPage tabView;
-        private Panel panel1;
         private ComboBox cmbLayer;
         private Label lblLayer;
         private ToolStripMenuItem scaleToolStripMenuItem;
@@ -631,5 +632,6 @@ namespace WinFormsApp1
         private DataGridViewTextBoxColumn colTraversingVX;
         private DataGridViewTextBoxColumn colTraversingVY;
         private ToolStripMenuItem closeToolStripMenuItem;
+        private PictureBox pictureBox1;
     }
 }

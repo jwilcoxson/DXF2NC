@@ -1,6 +1,8 @@
 using netDxf.Entities;
 using netDxf;
+using Svg;
 using DXF2NC;
+using Svg.Transforms;
 
 namespace WinFormsApp1
 {
@@ -87,7 +89,6 @@ namespace WinFormsApp1
                     dgvTraversing.Rows.Add(index, c.Command, c.X.ToString(format), c.Y.ToString(format), c.XVelocity.ToString(format), c.YVelocity.ToString(format));
                     index++;
                 }
-                panel1.Refresh();
             }
         }
 
@@ -129,57 +130,6 @@ namespace WinFormsApp1
                 Graphics g = e.Graphics;
 
 
-                var width = panel1.Width;
-                var height = panel1.Height;
-                var min_x = vertices.Min(p => p.Position.X);
-                var max_x = vertices.Max(p => p.Position.X);
-                var min_y = vertices.Min(p => p.Position.Y);
-                var max_y = vertices.Max(p => p.Position.Y);
-                var span_x = max_x - min_x;
-                var span_y = max_y - min_y;
-                var x_scale = (width) / span_x;
-                var y_scale = (height) / span_y;
-                var scale = Math.Min(x_scale, y_scale) * 0.9;
-                var x_offset = -min_x * scale + (width - span_x * scale) / 2;
-                var y_offset = -min_y * scale + (height - span_y * scale) / 2;
-
-                for (int i = 0; i < vertices.Count; i++)
-                {
-                    var x = (float)(vertices[i].Position.X * scale + x_offset);
-                    var y = (float)(vertices[i].Position.Y * scale + y_offset);
-
-                    if (i > 0 && i < (vertices.Count - 1))
-                    {
-                        var next_x = (float)(vertices[i + 1].Position.X * scale + x_offset);
-                        var next_y = (float)(vertices[i + 1].Position.Y * scale + y_offset);
-                        var dx = next_x - x;
-                        var dy = next_y - y;
-
-                        if (vertices[i].Bulge != 0.0)
-                        {
-                            var r = (float)PathGenerator.CalcRadius(next_x - x, next_y - y, vertices[i].Bulge);
-                            g.DrawString("R: " + (r / scale).ToString(format), new Font("Arial", 8), Brushes.Black, x + dx / 2, y + dy / 2);
-                        }
-                        else
-                        {
-                            g.DrawLine(new Pen(Color.Black, 2), x, y, next_x, next_y);
-                        }
-                    }
-                    else if (i == 0)
-                    {
-                        g.DrawEllipse(new Pen(Color.Green, 2), x - 5, y - 5, 10, 10);
-                        g.DrawString("Start", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
-                        g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
-                        g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
-                    }
-                    if (i == vertices.Count - 1)
-                    {
-                        g.DrawEllipse(new Pen(Color.Red, 2), x - 5, y - 5, 10, 10);
-                        g.DrawString("End", new Font("Arial", 8), Brushes.Black, x + 5, y + 5);
-                        g.DrawString("X: " + vertices[i].Position.X.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 15);
-                        g.DrawString("Y: " + vertices[i].Position.Y.ToString(format), new Font("Arial", 8), Brushes.Black, x + 5, y + 25);
-                    }
-                }
             }
         }
 
@@ -297,16 +247,6 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void tabCode_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dgvPoints_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void dgvPoints_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             var pos = vertices[e.RowIndex].Position;
@@ -386,6 +326,64 @@ namespace WinFormsApp1
             {
                 t.Enabled = false;
             }
+        }
+
+        private void tabView_Paint(object sender, PaintEventArgs e)
+        {
+            SvgDocument svg = new();
+
+            if (loaded)
+            {
+                var last_x = 0.0;
+                var last_y = 0.0;
+
+                foreach (var v in vertices)
+                {
+                    if (ReferenceEquals(v, vertices.First()))
+                    {
+                        svg.Children.Add(new SvgCircle()
+                        {
+                            CenterX = (float)v.Position.X,
+                            CenterY = (float)v.Position.Y,
+                            Radius = 2,
+                            Fill = new SvgColourServer(Color.Red)
+                        });
+                    }
+                    else if (ReferenceEquals(v, vertices.Last()))
+                    {
+                        svg.Children.Add(new SvgCircle()
+                        {
+                            CenterX = (float)v.Position.X,
+                            CenterY = (float)v.Position.Y,
+                            Radius = 2,
+                            Fill = new SvgColourServer(Color.Green)
+                        });
+                    }
+                    else
+                    {
+                        svg.Children.Add(new SvgCircle()
+                        {
+                            CenterX = (float)v.Position.X,
+                            CenterY = (float)v.Position.Y,
+                            Radius = 2,
+                            Fill = new SvgColourServer(Color.Blue)
+                        });
+                        svg.Children.Add(new SvgLine()
+                        {
+                            StartX = (float)last_x,
+                            StartY = (float)last_y,
+                            EndX = (float)v.Position.X,
+                            EndY = (float)v.Position.Y,
+                            Stroke = new SvgColourServer(Color.Black),
+                            StrokeWidth = 1
+                        });
+                    }
+                    last_x = v.Position.X;
+                    last_y = v.Position.Y;
+                }
+            }
+            pictureBox1.Image = svg.Draw();
+
         }
     }
 }
