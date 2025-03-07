@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace WinFormsApp1
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -40,7 +40,7 @@ namespace WinFormsApp1
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             numFeedRate = new NumericUpDown();
             label1 = new Label();
             txtOutput = new TextBox();

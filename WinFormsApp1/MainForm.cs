@@ -6,7 +6,7 @@ using Svg.Transforms;
 
 namespace WinFormsApp1
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private DxfDocument doc = new();
         private Polyline2D pline = new();
@@ -16,7 +16,7 @@ namespace WinFormsApp1
         private List<DXF2NC.GCodeCommand> commands = [];
         private int line_counter = 0;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
