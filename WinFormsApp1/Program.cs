@@ -1,6 +1,6 @@
  
 
-namespace WinFormsApp1
+namespace DXF2NC
 {
     internal static class Program
     {

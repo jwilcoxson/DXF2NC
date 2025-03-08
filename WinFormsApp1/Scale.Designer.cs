@@ -94,7 +94,7 @@
             // 
             // btnOk
             // 
-            btnOk.Location = new Point(12, 84);
+            btnOk.Location = new Point(12, 72);
             btnOk.Name = "btnOk";
             btnOk.Size = new Size(100, 41);
             btnOk.TabIndex = 6;
@@ -104,7 +104,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(118, 84);
+            btnCancel.Location = new Point(118, 72);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 41);
             btnCancel.TabIndex = 7;
@@ -114,11 +114,13 @@
             // 
             // Scale
             // 
+            AcceptButton = btnOk;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(231, 138);
+            CancelButton = btnCancel;
+            ClientSize = new Size(231, 123);
             ControlBox = false;
             Controls.Add(btnCancel);
             Controls.Add(btnOk);

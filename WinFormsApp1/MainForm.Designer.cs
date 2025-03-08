@@ -5,7 +5,7 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 
 
-namespace WinFormsApp1
+namespace DXF2NC
 {
     partial class MainForm
     {
@@ -50,13 +50,19 @@ namespace WinFormsApp1
             closeToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             editToolStripMenuItem = new ToolStripMenuItem();
-            translateToolStripMenuItem1 = new ToolStripMenuItem();
-            rotateToolStripMenuItem = new ToolStripMenuItem();
-            clockwiseToolStripMenuItem = new ToolStripMenuItem();
-            counterClockwiseToolStripMenuItem = new ToolStripMenuItem();
-            rotateToolStripMenuItem1 = new ToolStripMenuItem();
-            scaleToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
+            transformToolStripMenuItem = new ToolStripMenuItem();
+            translateToolStripMenuItem = new ToolStripMenuItem();
+            rotateLeftToolStripMenuItem = new ToolStripMenuItem();
+            rotateRightToolStripMenuItem = new ToolStripMenuItem();
+            rotateToolStripMenuItem2 = new ToolStripMenuItem();
+            scaleToolStripMenuItem1 = new ToolStripMenuItem();
+            invertXToolStripMenuItem = new ToolStripMenuItem();
+            invertYToolStripMenuItem = new ToolStripMenuItem();
+            precisionToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem7 = new ToolStripMenuItem();
+            toolStripMenuItem8 = new ToolStripMenuItem();
+            toolStripMenuItem9 = new ToolStripMenuItem();
+            toolStripMenuItem10 = new ToolStripMenuItem();
             tabControl1 = new TabControl();
             tabCode = new TabPage();
             tabPoints = new TabPage();
@@ -180,60 +186,104 @@ namespace WinFormsApp1
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem1, rotateToolStripMenuItem, scaleToolStripMenuItem, toolStripSeparator1 });
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { transformToolStripMenuItem, invertXToolStripMenuItem, invertYToolStripMenuItem, precisionToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             editToolStripMenuItem.ShortcutKeys = Keys.Alt | Keys.E;
             editToolStripMenuItem.Size = new Size(49, 24);
             editToolStripMenuItem.Text = "&Edit";
             // 
-            // translateToolStripMenuItem1
+            // transformToolStripMenuItem
             // 
-            translateToolStripMenuItem1.Name = "translateToolStripMenuItem1";
-            translateToolStripMenuItem1.ShortcutKeys = Keys.Control | Keys.T;
-            translateToolStripMenuItem1.Size = new Size(201, 26);
-            translateToolStripMenuItem1.Text = "Translate";
-            translateToolStripMenuItem1.Click += translateToolStripMenuItem1_Click;
+            transformToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { translateToolStripMenuItem, rotateLeftToolStripMenuItem, rotateRightToolStripMenuItem, rotateToolStripMenuItem2, scaleToolStripMenuItem1 });
+            transformToolStripMenuItem.Name = "transformToolStripMenuItem";
+            transformToolStripMenuItem.Size = new Size(224, 26);
+            transformToolStripMenuItem.Text = "Transform";
             // 
-            // rotateToolStripMenuItem
+            // translateToolStripMenuItem
             // 
-            rotateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clockwiseToolStripMenuItem, counterClockwiseToolStripMenuItem, rotateToolStripMenuItem1 });
-            rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
-            rotateToolStripMenuItem.Size = new Size(201, 26);
-            rotateToolStripMenuItem.Text = "Rotate";
+            translateToolStripMenuItem.Name = "translateToolStripMenuItem";
+            translateToolStripMenuItem.Size = new Size(175, 26);
+            translateToolStripMenuItem.Text = "Translate...";
+            translateToolStripMenuItem.Click += translateToolStripMenuItem_Click;
             // 
-            // clockwiseToolStripMenuItem
+            // rotateLeftToolStripMenuItem
             // 
-            clockwiseToolStripMenuItem.Name = "clockwiseToolStripMenuItem";
-            clockwiseToolStripMenuItem.Size = new Size(215, 26);
-            clockwiseToolStripMenuItem.Text = "Clockwise";
-            clockwiseToolStripMenuItem.Click += clockwiseToolStripMenuItem_Click;
+            rotateLeftToolStripMenuItem.Name = "rotateLeftToolStripMenuItem";
+            rotateLeftToolStripMenuItem.Size = new Size(175, 26);
+            rotateLeftToolStripMenuItem.Text = "Rotate Left";
+            rotateLeftToolStripMenuItem.Click += rotLeftToolStripButton_Click;
             // 
-            // counterClockwiseToolStripMenuItem
+            // rotateRightToolStripMenuItem
             // 
-            counterClockwiseToolStripMenuItem.Name = "counterClockwiseToolStripMenuItem";
-            counterClockwiseToolStripMenuItem.Size = new Size(215, 26);
-            counterClockwiseToolStripMenuItem.Text = "Counter-Clockwise";
-            counterClockwiseToolStripMenuItem.Click += counterClockwiseToolStripMenuItem_Click;
+            rotateRightToolStripMenuItem.Name = "rotateRightToolStripMenuItem";
+            rotateRightToolStripMenuItem.Size = new Size(175, 26);
+            rotateRightToolStripMenuItem.Text = "Rotate Right";
+            rotateRightToolStripMenuItem.Click += rotRightToolStripButton_Click;
             // 
-            // rotateToolStripMenuItem1
+            // rotateToolStripMenuItem2
             // 
-            rotateToolStripMenuItem1.Name = "rotateToolStripMenuItem1";
-            rotateToolStripMenuItem1.Size = new Size(215, 26);
-            rotateToolStripMenuItem1.Text = "Rotate...";
-            rotateToolStripMenuItem1.Click += rotateToolStripMenuItem1_Click;
+            rotateToolStripMenuItem2.Name = "rotateToolStripMenuItem2";
+            rotateToolStripMenuItem2.Size = new Size(175, 26);
+            rotateToolStripMenuItem2.Text = "Rotate...";
+            rotateToolStripMenuItem2.Click += rotateToolStripMenuItem1_Click;
             // 
-            // scaleToolStripMenuItem
+            // scaleToolStripMenuItem1
             // 
-            scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
-            scaleToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            scaleToolStripMenuItem.Size = new Size(201, 26);
-            scaleToolStripMenuItem.Text = "Scale";
-            scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
+            scaleToolStripMenuItem1.Name = "scaleToolStripMenuItem1";
+            scaleToolStripMenuItem1.Size = new Size(175, 26);
+            scaleToolStripMenuItem1.Text = "Scale...";
+            scaleToolStripMenuItem1.Click += scaleToolStripMenuItem_Click;
             // 
-            // toolStripSeparator1
+            // invertXToolStripMenuItem
             // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(198, 6);
+            invertXToolStripMenuItem.Name = "invertXToolStripMenuItem";
+            invertXToolStripMenuItem.Size = new Size(224, 26);
+            invertXToolStripMenuItem.Text = "Invert X";
+            invertXToolStripMenuItem.Click += invertXToolStripButton_Click;
+            // 
+            // invertYToolStripMenuItem
+            // 
+            invertYToolStripMenuItem.Name = "invertYToolStripMenuItem";
+            invertYToolStripMenuItem.Size = new Size(224, 26);
+            invertYToolStripMenuItem.Text = "Invert Y";
+            invertYToolStripMenuItem.Click += invertYToolStripButton_Click;
+            // 
+            // precisionToolStripMenuItem
+            // 
+            precisionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem7, toolStripMenuItem8, toolStripMenuItem9, toolStripMenuItem10 });
+            precisionToolStripMenuItem.Name = "precisionToolStripMenuItem";
+            precisionToolStripMenuItem.Size = new Size(224, 26);
+            precisionToolStripMenuItem.Text = "Precision";
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.Checked = true;
+            toolStripMenuItem7.CheckState = CheckState.Checked;
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new Size(224, 26);
+            toolStripMenuItem7.Text = "0.000";
+            toolStripMenuItem7.Click += toolStripMenuItem2_Click;
+            // 
+            // toolStripMenuItem8
+            // 
+            toolStripMenuItem8.Name = "toolStripMenuItem8";
+            toolStripMenuItem8.Size = new Size(224, 26);
+            toolStripMenuItem8.Text = "0.0000";
+            toolStripMenuItem8.Click += toolStripMenuItem3_Click;
+            // 
+            // toolStripMenuItem9
+            // 
+            toolStripMenuItem9.Name = "toolStripMenuItem9";
+            toolStripMenuItem9.Size = new Size(224, 26);
+            toolStripMenuItem9.Text = "0.00000";
+            toolStripMenuItem9.Click += toolStripMenuItem4_Click;
+            // 
+            // toolStripMenuItem10
+            // 
+            toolStripMenuItem10.Name = "toolStripMenuItem10";
+            toolStripMenuItem10.Size = new Size(224, 26);
+            toolStripMenuItem10.Text = "0.000000";
+            toolStripMenuItem10.Click += toolStripMenuItem5_Click;
             // 
             // tabControl1
             // 
@@ -460,7 +510,7 @@ namespace WinFormsApp1
             rotLeftToolStripButton1.Name = "rotLeftToolStripButton1";
             rotLeftToolStripButton1.Size = new Size(106, 24);
             rotLeftToolStripButton1.Text = "Rotate Left";
-            rotLeftToolStripButton1.Click += rotLeftToolStripButton1_Click;
+            rotLeftToolStripButton1.Click += rotLeftToolStripButton_Click;
             // 
             // rotRightToolStripButton1
             // 
@@ -470,7 +520,7 @@ namespace WinFormsApp1
             rotRightToolStripButton1.Name = "rotRightToolStripButton1";
             rotRightToolStripButton1.Size = new Size(116, 24);
             rotRightToolStripButton1.Text = "Rotate Right";
-            rotRightToolStripButton1.Click += rotRightToolStripButton1_Click;
+            rotRightToolStripButton1.Click += rotRightToolStripButton_Click;
             // 
             // invertXToolStripButton
             // 
@@ -480,7 +530,7 @@ namespace WinFormsApp1
             invertXToolStripButton.Name = "invertXToolStripButton";
             invertXToolStripButton.Size = new Size(83, 24);
             invertXToolStripButton.Text = "Invert X";
-            invertXToolStripButton.Click += toolStripButton1_Click;
+            invertXToolStripButton.Click += invertXToolStripButton_Click;
             // 
             // invertYToolStripButton
             // 
@@ -490,7 +540,7 @@ namespace WinFormsApp1
             invertYToolStripButton.Name = "invertYToolStripButton";
             invertYToolStripButton.Size = new Size(82, 24);
             invertYToolStripButton.Text = "Invert Y";
-            invertYToolStripButton.Click += toolStripButton2_Click;
+            invertYToolStripButton.Click += invertYToolStripButton_Click;
             // 
             // reversePathToolStripButton
             // 
@@ -542,7 +592,7 @@ namespace WinFormsApp1
             toolStripMenuItem5.Text = "0.000000";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
-            // Form1
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -560,7 +610,7 @@ namespace WinFormsApp1
             MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "Form1";
+            Name = "MainForm";
             SizeGripStyle = SizeGripStyle.Hide;
             Text = "DXF2NC";
             ((System.ComponentModel.ISupportInitialize)numFeedRate).EndInit();
@@ -599,20 +649,13 @@ namespace WinFormsApp1
         private TabPage tabView;
         private ComboBox cmbLayer;
         private Label lblLayer;
-        private ToolStripMenuItem scaleToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripMenuItem translateToolStripMenuItem1;
         private Label lblPolyline;
         private ComboBox cmbPolyline;
-        private ToolStripMenuItem rotateToolStripMenuItem;
         private ToolStrip toolStrip1;
         private ToolStripButton rotLeftToolStripButton1;
         private ToolStripButton rotRightToolStripButton1;
         private ToolStripButton invertXToolStripButton;
         private ToolStripButton invertYToolStripButton;
-        private ToolStripMenuItem clockwiseToolStripMenuItem;
-        private ToolStripMenuItem counterClockwiseToolStripMenuItem;
-        private ToolStripMenuItem rotateToolStripMenuItem1;
         private ToolStripButton reversePathToolStripButton;
         private ToolStripDropDownButton toolStripDropDownButton1;
         private ToolStripMenuItem toolStripMenuItem2;
@@ -633,5 +676,18 @@ namespace WinFormsApp1
         private DataGridViewTextBoxColumn colTraversingVY;
         private ToolStripMenuItem closeToolStripMenuItem;
         private PictureBox pictureBox1;
+        private ToolStripMenuItem transformToolStripMenuItem;
+        private ToolStripMenuItem translateToolStripMenuItem;
+        private ToolStripMenuItem rotateLeftToolStripMenuItem;
+        private ToolStripMenuItem rotateRightToolStripMenuItem;
+        private ToolStripMenuItem rotateToolStripMenuItem2;
+        private ToolStripMenuItem scaleToolStripMenuItem1;
+        private ToolStripMenuItem invertXToolStripMenuItem;
+        private ToolStripMenuItem invertYToolStripMenuItem;
+        private ToolStripMenuItem precisionToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem7;
+        private ToolStripMenuItem toolStripMenuItem8;
+        private ToolStripMenuItem toolStripMenuItem9;
+        private ToolStripMenuItem toolStripMenuItem10;
     }
 }

@@ -94,8 +94,10 @@
             // 
             // Translate
             // 
+            AcceptButton = btnOk;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = btnCancel;
             ClientSize = new Size(230, 126);
             ControlBox = false;
             Controls.Add(btnCancel);

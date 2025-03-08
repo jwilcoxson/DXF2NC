@@ -1,10 +1,9 @@
 using netDxf.Entities;
 using netDxf;
 using Svg;
-using DXF2NC;
-using Svg.Transforms;
+using Svg.Pathing;
 
-namespace WinFormsApp1
+namespace DXF2NC
 {
     public partial class MainForm : Form
     {
@@ -19,7 +18,14 @@ namespace WinFormsApp1
         public MainForm()
         {
             InitializeComponent();
-
+            foreach (ToolStripItem t in toolStrip1.Items)
+            {
+                t.Enabled = false;
+            }
+            foreach (ToolStripDropDownItem t in editToolStripMenuItem.DropDownItems)
+            {
+                t.Enabled = false;
+            }
         }
 
         private string LineCounter()
@@ -71,10 +77,11 @@ namespace WinFormsApp1
             {
                 line_counter = 0;
                 PathGenerator pathGenerator = new();
-                this.commands = pathGenerator.GeneratePath(vertices, false, (int)numFeedRate.Value);
+                this.commands = pathGenerator.GeneratePath(vertices, (int)numFeedRate.Value);
                 txtOutput.Text = string.Join(Environment.NewLine, commands.Select(p => LineCounter() + " " + p.ToString(format)));
                 txtOutput.Text += Environment.NewLine + "(Length: " + commands.Sum(p => p.Length).ToString(format) + ")";
                 txtOutput.Text += Environment.NewLine + "(Time: " + commands.Sum(p => p.Time).ToString(format) + "s)";
+
                 dgvPoints.Rows.Clear();
                 var index = 1;
                 foreach (var v in vertices)
@@ -82,6 +89,7 @@ namespace WinFormsApp1
                     dgvPoints.Rows.Add(index, v.Position.X.ToString(format), v.Position.Y.ToString(format), v.Bulge.ToString(format));
                     index++;
                 }
+
                 dgvTraversing.Rows.Clear();
                 index = 1;
                 foreach (var c in commands)
@@ -114,23 +122,12 @@ namespace WinFormsApp1
                 {
                     t.Enabled = true;
                 }
+                foreach (ToolStripDropDownItem t in editToolStripMenuItem.DropDownItems)
+                {
+                    t.Enabled = true;
+                }
             }
             GCodeUpdate();
-        }
-
-        private void chkStartAbs_CheckedChanged(object sender, EventArgs e)
-        {
-            GCodeUpdate();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-            if (loaded)
-            {
-                Graphics g = e.Graphics;
-
-
-            }
         }
 
         private void cmbLayer_SelectedIndexChanged(object sender, EventArgs e)
@@ -161,7 +158,7 @@ namespace WinFormsApp1
             }
         }
 
-        private void translateToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void translateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var translate = new DXF2NC.Translate();
             translate.ShowDialog();
@@ -184,7 +181,7 @@ namespace WinFormsApp1
         }
 
 
-        private void rotLeftToolStripButton1_Click(object sender, EventArgs e)
+        private void rotLeftToolStripButton_Click(object sender, EventArgs e)
         {
             var angle = -90;
             var matrix4 = Matrix4.RotationZ(angle * Math.PI / 180);
@@ -192,7 +189,7 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void rotRightToolStripButton1_Click(object sender, EventArgs e)
+        private void rotRightToolStripButton_Click(object sender, EventArgs e)
         {
             var angle = 90;
             var matrix4 = Matrix4.RotationZ(angle * Math.PI / 180);
@@ -200,7 +197,7 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private void invertXToolStripButton_Click(object sender, EventArgs e)
         {
             var matrix4 = Matrix4.Scale(-1, 1, 1);
             pline.TransformBy(matrix4);
@@ -208,7 +205,7 @@ namespace WinFormsApp1
             GCodeUpdate();
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        private void invertYToolStripButton_Click(object sender, EventArgs e)
         {
             var matrix4 = Matrix4.Scale(1, -1, 1);
             pline.TransformBy(matrix4);
@@ -228,16 +225,6 @@ namespace WinFormsApp1
                 vertices = [.. pline.Vertexes.Where(p => true)];
                 GCodeUpdate();
             }
-        }
-
-        private void clockwiseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotLeftToolStripButton1_Click(sender, e);
-        }
-
-        private void counterClockwiseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotRightToolStripButton1_Click(sender, e);
         }
 
         private void reversePathToolStripButton_Click(object sender, EventArgs e)
@@ -275,6 +262,10 @@ namespace WinFormsApp1
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = false;
             toolStripMenuItem5.Checked = false;
+            toolStripMenuItem7.Checked = true;
+            toolStripMenuItem8.Checked = false;
+            toolStripMenuItem9.Checked = false;
+            toolStripMenuItem10.Checked = false;
             GCodeUpdate();
         }
 
@@ -285,6 +276,10 @@ namespace WinFormsApp1
             toolStripMenuItem3.Checked = true;
             toolStripMenuItem4.Checked = false;
             toolStripMenuItem5.Checked = false;
+            toolStripMenuItem7.Checked = false;
+            toolStripMenuItem8.Checked = true;
+            toolStripMenuItem9.Checked = false;
+            toolStripMenuItem10.Checked = false;
             GCodeUpdate();
         }
 
@@ -295,6 +290,10 @@ namespace WinFormsApp1
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = true;
             toolStripMenuItem5.Checked = false;
+            toolStripMenuItem7.Checked = false;
+            toolStripMenuItem8.Checked = false;
+            toolStripMenuItem9.Checked = true;
+            toolStripMenuItem10.Checked = false;
             GCodeUpdate();
         }
 
@@ -305,6 +304,10 @@ namespace WinFormsApp1
             toolStripMenuItem3.Checked = false;
             toolStripMenuItem4.Checked = false;
             toolStripMenuItem5.Checked = true;
+            toolStripMenuItem7.Checked = false;
+            toolStripMenuItem8.Checked = false;
+            toolStripMenuItem9.Checked = false;
+            toolStripMenuItem10.Checked = true;
             GCodeUpdate();
         }
 
@@ -331,11 +334,20 @@ namespace WinFormsApp1
         private void tabView_Paint(object sender, PaintEventArgs e)
         {
             SvgDocument svg = new();
+            var circ = false;
+            var b = 0.0;
+
+            // Get min and max X values
+            var minX = vertices.Min(p => p.Position.X);
+            var maxX = vertices.Max(p => p.Position.X);
+            var minY = vertices.Min(p => p.Position.Y);
+            var maxY = vertices.Max(p => p.Position.Y);
 
             if (loaded)
             {
                 var last_x = 0.0;
                 var last_y = 0.0;
+                var color = new SvgColourServer(Color.Black);
 
                 foreach (var v in vertices)
                 {
@@ -345,7 +357,7 @@ namespace WinFormsApp1
                         {
                             CenterX = (float)v.Position.X,
                             CenterY = (float)v.Position.Y,
-                            Radius = 2,
+                            Radius = 1,
                             Fill = new SvgColourServer(Color.Red)
                         });
                     }
@@ -355,18 +367,8 @@ namespace WinFormsApp1
                         {
                             CenterX = (float)v.Position.X,
                             CenterY = (float)v.Position.Y,
-                            Radius = 2,
+                            Radius = 1,
                             Fill = new SvgColourServer(Color.Green)
-                        });
-                    }
-                    else
-                    {
-                        svg.Children.Add(new SvgCircle()
-                        {
-                            CenterX = (float)v.Position.X,
-                            CenterY = (float)v.Position.Y,
-                            Radius = 2,
-                            Fill = new SvgColourServer(Color.Blue)
                         });
                         svg.Children.Add(new SvgLine()
                         {
@@ -378,12 +380,76 @@ namespace WinFormsApp1
                             StrokeWidth = 1
                         });
                     }
+                    else
+                    {
+                        svg.Children.Add(new SvgCircle()
+                        {
+                            CenterX = (float)v.Position.X,
+                            CenterY = (float)v.Position.Y,
+                            Radius = 1,
+                            Fill = new SvgColourServer(Color.Blue)
+                        });
+
+                        if (!circ)
+                        {
+                            svg.Children.Add(new SvgLine()
+                            {
+                                StartX = (float)last_x,
+                                StartY = (float)last_y,
+                                EndX = (float)v.Position.X,
+                                EndY = (float)v.Position.Y,
+                                Stroke = color,
+                                StrokeWidth = 1
+                            });
+                        }
+                        else
+                        {
+                            var radius = (float)PathGenerator.CalcRadius(v.Position.X - last_x, v.Position.Y - last_y, b)/2;
+                            var angle = (float)Math.Atan2(v.Position.Y - last_y, v.Position.X - last_x);
+                            var start = new PointF((float)last_x, (float)last_y);
+                            var end = new PointF((float)v.Position.X, (float)v.Position.Y);
+
+                            var text = new SvgText()
+                            {
+                                X = new SvgUnitCollection() { (float)v.Position.X },
+                                Y = new SvgUnitCollection() { (float)v.Position.Y },
+                                Fill = color,
+                                FontSize = 3,
+                                Text = radius.ToString(format)
+                            };
+                            svg.Children.Add(text);
+                        }
+
+
+
+                        if (v.Bulge != 0.0)
+                        {
+                            color = new SvgColourServer(Color.Red);
+                            circ = true;
+                        }
+                        else
+                        {
+                            color = new SvgColourServer(Color.Black);
+                            circ = false;
+                        }
+                        b = v.Bulge;
+
+                    }
                     last_x = v.Position.X;
                     last_y = v.Position.Y;
                 }
             }
-            pictureBox1.Image = svg.Draw();
 
+            // Center and scale SVG to fit in picture box
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            var width = maxX - minX;
+            var height = maxY - minY;
+            svg.Width = (SvgUnit)(width);
+            svg.Height = (SvgUnit)(height);
+            svg.ViewBox = new SvgViewBox((float)minX, (float)minY, (float)width, (float)height);
+
+            pictureBox1.Image = svg.Draw(pictureBox1.Width,0);
         }
+
     }
 }
